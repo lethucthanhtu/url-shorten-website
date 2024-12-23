@@ -1,20 +1,26 @@
-import Header from './components/header.component';
-import { ThemeProvider } from './components/theme-provider.component';
-import ShortenURL from './pages/shortenURL.page';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
+import ShortenURL from '@/pages/Home/home.page';
 
-import './index.css'
-import Footer from './components/footer.component';
+import './index.css';
+
+import { useEffect, useState } from 'react';
 
 export default function App() {
+	const [, setUser] = useState(null);
+
+	useEffect(() => {
+		const savedUser = localStorage.getItem('user');
+		if (savedUser) setUser(JSON.parse(savedUser)); // Restore user on page load
+	}, []);
+
 	return (
 		<>
-			<ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-				<div className='container mx-auto flex flex-col justify-between min-h-screen'>
-					<Header />
-          <ShortenURL />
-          <Footer/>
-				</div>
-			</ThemeProvider>
+			<div className='flex flex-col justify-between min-h-screen'>
+				<Header />
+				<ShortenURL />
+				<Footer />
+			</div>
 		</>
 	);
 }

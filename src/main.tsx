@@ -1,15 +1,17 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ThemeProvider } from './components/theme-provider.tsx';
 
-import "./index.css";
-import App from "./App.tsx";
+import App from './App.tsx';
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <App />
-    </GoogleOAuthProvider>
-  </StrictMode>
+createRoot(document.getElementById('root')!).render(
+	<StrictMode>
+		<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+			<ThemeProvider defaultTheme='dark'>
+				<App />
+			</ThemeProvider>
+		</GoogleOAuthProvider>
+	</StrictMode>
 );
