@@ -265,7 +265,7 @@ export function DataTableDemo() {
 	});
 
 	return (
-		<div className='container mx-auto !overflow-x-hidden'>
+		<div className=''>
 			<div className='flex items-center py-4'>
 				<Input
 					placeholder='Filter emails...'

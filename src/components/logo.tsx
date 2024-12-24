@@ -1,4 +1,4 @@
-import TulttLogo from "@/assets/TuLTTlogo.svg";
+import TulttLogo from "@/assets/svg/TuLTTlogo.svg";
 import { cn } from "@/lib/utils";
 
 import { ImgHTMLAttributes } from "react";
