@@ -12,14 +12,15 @@ import {
 import Logo from './logo';
 
 import { capitalize } from '@/lib/utils';
-import { ModeToggle } from './mode-toggle';
-import { LanguageToggle } from './language-toggle';
-import { UserMenu } from './user-menu.component';
+import { ModeToggle } from './modeToggle';
+import { LanguageToggle } from './languageToggle';
+import { UserMenu } from './userMenu';
+import { Link } from '@tanstack/react-router';
 
 export default function Header() {
 	return (
-		<div className='container mx-auto px-4 md:px-6 lg:px-8 sticky top-0 bg-white dark:bg-black z-10 dark:shadow-none'>
-			<header className='flex h-20 w-full shrink-0 items-center px-4 md:px-6'>
+		<div className='container mx-auto sticky top-0 z-10'>
+			<header className='flex h-20 w-full shrink-0 items-center bg-background'>
 				<Sheet>
 					<SheetTrigger asChild>
 						<Button variant='outline' size='icon' className='lg:hidden'>
@@ -43,10 +44,6 @@ export default function Header() {
 						<LanguageToggle />
 						<ModeToggle />
 					</div>
-					{/* <div className="flex gap-2">
-            <Button variant="outline">Sign in</Button>
-            <Button>Sign Up</Button>
-          </div> */}
 					<UserMenu />
 				</div>
 			</header>
@@ -108,14 +105,17 @@ function NavBar() {
 		<>
 			<NavigationMenu className='hidden lg:flex'>
 				<NavigationMenuList>
-					{navItems.map(({ ...props }) => (
-						<NavigationMenuLink asChild>
-							<a
-								href={props.href || '#'}
-								className='group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50 active:underline'
+					{navItems.map(({ ...props }, index) => (
+						<NavigationMenuLink asChild key={index}>
+							<Link
+								// activeProps={{
+								// 	className: 'bg-gray-200 dark:bg-gray-800 font-bold ',
+								// }}
+								to={props.href || '#'}
+								className='group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50 [&.active]:bg-gray-200 dark:[&.active]:bg-gray-800 [&.active]:font-bold'
 							>
 								{capitalize(props.title)}
-							</a>
+							</Link>
 						</NavigationMenuLink>
 					))}
 				</NavigationMenuList>
@@ -128,12 +128,12 @@ function NavList() {
 	return (
 		<>
 			{navItems.map(({ ...props }) => (
-				<a
-					href={props.href}
+				<Link
+					to={props.href}
 					className='flex w-full items-center py-2 text-lg font-semibold'
 				>
 					{capitalize(props.title)}
-				</a>
+				</Link>
 			))}
 		</>
 	);

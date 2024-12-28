@@ -1,20 +1,20 @@
-import { Moon, Sun } from 'lucide-react';
+import { CircleCheck, Moon, Sun } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Theme } from '@/context/ThemeContext';
-import { capitalize } from '@/lib/utils';
-import { useTheme } from '@/hooks/useTheme';
+import { Theme, themeKey, useTheme } from '@/context/ThemeContext';
 
 export function ModeToggle() {
 	const { setTheme } = useTheme();
 
 	const MODE: Theme[] = ['light', 'dark', 'system'];
+	const currentTheme = localStorage.getItem(themeKey) as Theme;
 
 	return (
 		<DropdownMenu>
@@ -27,8 +27,13 @@ export function ModeToggle() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end'>
 				{MODE.map((mode) => (
-					<DropdownMenuItem onClick={() => setTheme(mode)}>
-						{capitalize(mode)}
+					<DropdownMenuItem onClick={() => setTheme(mode)} key={mode}>
+						<span className='capitalize'>{mode}</span>
+						{currentTheme === mode && (
+							<DropdownMenuShortcut>
+								<CircleCheck className='text-green-600 dark:text-green-500 size-4 animate-pulse' />
+							</DropdownMenuShortcut>
+						)}
 					</DropdownMenuItem>
 				))}
 			</DropdownMenuContent>

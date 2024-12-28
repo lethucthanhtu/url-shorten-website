@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 export default function Footer() {
 	return (
 		<div className='container mx-auto flex w-full flex-col items-center justify-between px-1 pb-8 pt-3 xl:flex-row'>
@@ -6,43 +8,43 @@ export default function Footer() {
 					©{new Date().getFullYear()} Le Thuc Thanh Tu. All Rights Reserved.
 				</span>
 			</p>
-			<div>
+			<div className="hidden md:block">
 				<ul className='flex flex-wrap items-center gap-3 sm:flex-nowrap md:gap-10'>
 					<li>
-						<a
+						<Link
 							target='blank'
 							href='mailto:lethucthanhtu@gmail.com'
 							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
 						>
 							FAQs
-						</a>
+						</Link>
 					</li>
 					<li>
-						<a
+						<Link
 							target='blank'
 							href='#'
 							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
 						>
 							Privacy Policy
-						</a>
+						</Link>
 					</li>
 					<li>
-						<a
+						<Link
 							target='blank'
 							href='#'
 							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
 						>
 							Terms & Conditions
-						</a>
+						</Link>
 					</li>
 					<li>
-						<a
+						<Link
 							target='blank'
 							href='#'
 							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
 						>
 							Refund Policy
-						</a>
+						</Link>
 					</li>
 				</ul>
 			</div>

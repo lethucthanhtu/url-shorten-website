@@ -20,14 +20,17 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { useGoogleLogin } from '@react-oauth/google';
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 
 import Google from '@/assets/svg/Google.svg';
-import { useUser } from '@/hooks/useUser';
+import { useStore } from '@tanstack/react-store';
+import { user } from '@/store/userStore';
+import { User } from '@/types/User';
 
 export function UserMenu() {
-	const { user, setUser, handleLogout } = useUser();
+	// const [user, setUser] = useState<User>();
+	const userStore = useStore(user, (data) => data);
 
 	const onLogin = useGoogleLogin({
 		onSuccess: async (tokenResponse) => {
@@ -41,11 +44,10 @@ export function UserMenu() {
 						},
 					}
 				);
-				setUser(data);
-				localStorage.setItem('user', JSON.stringify(data)); // Persist user data
-				localStorage.setItem('token', JSON.stringify(tokenResponse)); // Persist user data
-				console.log('User Info:', data);
-				console.log('User Info:', tokenResponse);
+
+				const userData: User = { ...data, ...tokenResponse };
+				user.setState(() => userData);
+				localStorage.setItem('user', JSON.stringify(userData)); // Persist user data
 			} catch (err) {
 				console.error('Failed to fetch user info:', err);
 			}
@@ -55,18 +57,27 @@ export function UserMenu() {
 		},
 	});
 
+	const handleLogout = () => {
+		googleLogout();
+		// setUser(undefined);
+		user.setState(() => undefined);
+
+		localStorage.removeItem('user');
+		localStorage.removeItem('token');
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant='outline' className='rounded'>
-					{user ? (
+					{userStore ? (
 						<>
 							<img
-								src={user?.picture}
+								src={userStore?.picture}
 								alt='user picture'
 								className='size-7 rounded-full border border-black dark:border-white p-0.5'
 							/>
-							{user?.name}
+							{userStore?.name}
 						</>
 					) : (
 						<>
@@ -76,8 +87,8 @@ export function UserMenu() {
 					)}
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className='w-56'>
-				<DropdownMenuLabel>{user?.email || 'Guest'}</DropdownMenuLabel>
+			<DropdownMenuContent className='w-56' align='end'>
+				<DropdownMenuLabel>{userStore?.email || 'Guest'}</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem>
@@ -105,26 +116,17 @@ export function UserMenu() {
 					<span>API</span>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>
-					{user ? (
-						<Button variant='ghost' onClick={handleLogout}>
-							<LogOut />
-							<span>Log Out</span>
-						</Button>
-					) : (
-						<Button
-							variant='ghost'
-							size='sm'
-							className='flex justify-between items-center gap-4'
-							onClick={() => {
-								onLogin();
-							}}
-						>
-							<img src={Google} />
-							<span>Sign In To Google</span>
-						</Button>
-					)}
-				</DropdownMenuItem>
+				{user.state ? (
+					<DropdownMenuItem onClick={handleLogout}>
+						<LogOut />
+						<span>Log Out</span>
+					</DropdownMenuItem>
+				) : (
+					<DropdownMenuItem onClick={() => onLogin()}>
+						<img src={Google} className='size-4' />
+						<span>Sign In To Google</span>
+					</DropdownMenuItem>
+				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
