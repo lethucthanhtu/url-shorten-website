@@ -1,140 +1,133 @@
-import { SVGProps } from 'react';
-import { JSX } from 'react/jsx-runtime';
-
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ThemeButton } from '@/components/themeButton';
+import Logo from '@/components/logo';
 import {
 	NavigationMenu,
-	NavigationMenuList,
 	NavigationMenuLink,
+	NavigationMenuList,
 } from '@/components/ui/navigation-menu';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { LayoutDashboard, LogOut, Settings, User } from 'lucide-react';
+import { HTMLAttributes } from 'react';
+import { useSession } from '@/contexts/SessionContext';
+import LoginGoogleButton from '@/components/googleButton';
 
-import Logo from './logo';
+type HeaderProps = {} & Omit<HTMLAttributes<HTMLElement>, ''>;
 
-import { capitalize } from '@/lib/utils';
-import { ModeToggle } from './modeToggle';
-import { LanguageToggle } from './languageToggle';
-import { UserMenu } from './userMenu';
-import { Link } from '@tanstack/react-router';
+export default function Header({ ...props }: HeaderProps) {
+	const { signOut, user } = useSession();
+	const navigate = useNavigate();
 
-export default function Header() {
+	const handleSignOut = () => {
+		signOut();
+		navigate({ to: '/' });
+	};
+
 	return (
-		<div className='container mx-auto sticky top-0 z-10'>
-			<header className='flex h-20 w-full shrink-0 items-center bg-background'>
-				<Sheet>
-					<SheetTrigger asChild>
-						<Button variant='outline' size='icon' className='lg:hidden'>
-							<MenuIcon className='size-6' />
-							<span className='sr-only'>Toggle navigation menu</span>
-						</Button>
-					</SheetTrigger>
-					<SheetContent side='left'>
-						<Logo className='size-8 border border-black dark:border-white' />
-						<div className='grid gap-2 py-6'>
-							<NavList />
-						</div>
-					</SheetContent>
-				</Sheet>
-				<div className='mr-6 hidden lg:flex'>
-					<Logo className='size-8 border border-black dark:border-white p-[2.5%]' />
-				</div>
-				<NavBar />
-				<div className='ml-auto flex gap-4'>
-					<div className='flex gap-2'>
-						<LanguageToggle />
-						<ModeToggle />
-					</div>
-					<UserMenu />
-				</div>
-			</header>
-		</div>
-	);
-}
-
-function MenuIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-	return (
-		<svg
+		<header
 			{...props}
-			xmlns='http://www.w3.org/2000/svg'
-			width='24'
-			height='24'
-			viewBox='0 0 24 24'
-			fill='none'
-			stroke='currentColor'
-			strokeWidth='2'
-			strokeLinecap='round'
-			strokeLinejoin='round'
+			className={cn(
+				'p-4 bg-cover bg-center rounded-lg flex justify-between items-center w-full sticky top-0 bg-background border-b z-50',
+				props.className
+			)}
 		>
-			<line x1='4' x2='20' y1='12' y2='12' />
-			<line x1='4' x2='20' y1='6' y2='6' />
-			<line x1='4' x2='20' y1='18' y2='18' />
-		</svg>
-	);
-}
+			<Logo className='size-10' />
 
-type NavItem = {
-	title: string;
-	href?: string;
-};
-
-const navItems: NavItem[] = [
-	{
-		title: 'home',
-		href: 'home',
-	},
-	{
-		title: 'about',
-		href: 'about',
-	},
-	{
-		title: 'service',
-		href: '#',
-	},
-	{
-		title: 'portfolio',
-		href: 'portfolio',
-	},
-	{
-		title: 'contact',
-		href: 'contact',
-	},
-];
-
-function NavBar() {
-	return (
-		<>
-			<NavigationMenu className='hidden lg:flex'>
-				<NavigationMenuList>
-					{navItems.map(({ ...props }, index) => (
-						<NavigationMenuLink asChild key={index}>
-							<Link
-								// activeProps={{
-								// 	className: 'bg-gray-200 dark:bg-gray-800 font-bold ',
-								// }}
-								to={props.href || '#'}
-								className='group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50 [&.active]:bg-gray-200 dark:[&.active]:bg-gray-800 [&.active]:font-bold'
-							>
-								{capitalize(props.title)}
-							</Link>
-						</NavigationMenuLink>
-					))}
+			<NavigationMenu className=''>
+				<NavigationMenuList className=''>
+					<NavigationMenuLink asChild className=''>
+						<Link to='/' className=''>
+							<Button variant='outline' className=''>
+								home
+							</Button>
+						</Link>
+					</NavigationMenuLink>
+					{/* <NavigationMenuLink asChild className=''>
+						<Link to='/dashboard' className=''>
+							<Button variant='outline' className=''>
+								dashboard
+							</Button>
+						</Link>
+					</NavigationMenuLink> */}
 				</NavigationMenuList>
 			</NavigationMenu>
-		</>
-	);
-}
 
-function NavList() {
-	return (
-		<>
-			{navItems.map(({ ...props }) => (
-				<Link
-					to={props.href}
-					className='flex w-full items-center py-2 text-lg font-semibold'
-				>
-					{capitalize(props.title)}
-				</Link>
-			))}
-		</>
+			<div className='inline-flex gap-2'>
+				<ThemeButton className='' />
+
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild className=''>
+						<Button variant='outline' size='icon' className=''>
+							{user ? (
+								<img
+									src={user?.user_metadata?.avatar_url}
+									alt={user?.user_metadata?.name[0]}
+									className='p-1 rounded-lg'
+								/>
+							) : (
+								<User className='' />
+							)}
+						</Button>
+					</DropdownMenuTrigger>
+					{user ? (
+						<>
+							<DropdownMenuContent align='end' className=''>
+								<DropdownMenuLabel className=''>
+									{user?.email}
+								</DropdownMenuLabel>
+								<DropdownMenuSeparator className='' />
+								<Link to='/dashboard'>
+									<DropdownMenuItem className='capitalize'>
+										<LayoutDashboard className='' />
+										<span className=''>dashboard</span>
+									</DropdownMenuItem>
+								</Link>
+								<Link to='/settings'>
+									<DropdownMenuItem className='capitalize' disabled>
+										<Settings />
+										<span className=''>settings</span>
+									</DropdownMenuItem>
+								</Link>
+								<DropdownMenuSeparator className='' />
+								<DropdownMenuItem
+									onClick={handleSignOut}
+									className='capitalize text-red-500'
+								>
+									<LogOut className='' /> <span className=''>log out</span>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</>
+					) : (
+						<>
+							<DropdownMenuContent align='end' className=''>
+								<Link to='/'>
+									<DropdownMenuItem className='capitalize'>
+										<Settings />
+										<span className=''>settings</span>
+									</DropdownMenuItem>
+								</Link>
+								<DropdownMenuSeparator className='' />
+								<DropdownMenuItem>
+									<LoginGoogleButton
+										asButton={false}
+										variant='ghost'
+										className=''
+									/>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</>
+					)}
+				</DropdownMenu>
+			</div>
+		</header>
 	);
 }

@@ -1,53 +1,88 @@
-import { Link } from "@tanstack/react-router";
+import { cn } from '@/lib/utils';
+import { HTMLAttributes } from 'react';
+import Logo from '@/components/logo';
+import { Facebook, Github, Linkedin, Mail, Phone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
-export default function Footer() {
+type FooterProps = {} & Omit<HTMLAttributes<HTMLElement>, ''>;
+
+export default function Footer({ ...props }: FooterProps) {
 	return (
-		<div className='container mx-auto flex w-full flex-col items-center justify-between px-1 pb-8 pt-3 xl:flex-row'>
-			<p className='mb-4 text-center text-sm font-medium text-zinc-500 dark:text-zinc-400 sm:!mb-0 md:text-lg'>
-				<span className='mb-4 text-center text-sm text-zinc-500 dark:text-zinc-400 sm:!mb-0 md:text-sm'>
-					©{new Date().getFullYear()} Le Thuc Thanh Tu. All Rights Reserved.
-				</span>
-			</p>
-			<div className="hidden md:block">
-				<ul className='flex flex-wrap items-center gap-3 sm:flex-nowrap md:gap-10'>
-					<li>
-						<Link
-							target='blank'
+		<>
+			<footer
+				{...props}
+				className={cn(
+					'flex flex-col gap-2 items-center justify-between w-full py-4 px-8 mt-4 shadow-[0px_-12px_6px_-2px_rgba(0,0,0,0.05)] dark:border border-t-gray-800 rounded-lg',
+					props.className
+				)}
+			>
+				<div className='w-full flex justify-between items-center'>
+					<Logo className='size-16 md:size-24' />
+					<div className='flex flex-col md:gap-2'>
+						<h4 className='text-lg md:text-2xl font-medium capitalize pb-2'>
+							Contact Me
+						</h4>
+						<a
+							target='_blank'
 							href='mailto:lethucthanhtu@gmail.com'
-							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
+							className=''
 						>
-							FAQs
-						</Link>
-					</li>
-					<li>
-						<Link
-							target='blank'
-							href='#'
-							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
+							<Button
+								variant='link'
+								className='flex gap-2 justify-center items-center'
+							>
+								<Mail className='' />
+								<span className=''>lethucthanhtu@gmail.com</span>
+							</Button>
+						</a>
+						<a target='_blank' href='tel:84984326742' className=''>
+							<Button
+								variant='link'
+								className='flex gap-2 justify-center items-center'
+							>
+								<Phone className='' />
+								<span className=''>(+84) 98 432 67 42</span>
+							</Button>
+						</a>
+					</div>
+				</div>
+				<Separator className='' />
+				<div className='flex w-full flex-col-reverse md:flex-row justify-between items-center'>
+					<span className=''>
+						© {new Date().getFullYear()} Lê Thúc Thanh Tú. All rights reserved
+					</span>
+					<div className='flex gap-2'>
+						<a
+							target='_blank'
+							href='https://linkedin.com/in/lethucthanhtu'
+							className='transition hover:scale-125'
 						>
-							Privacy Policy
-						</Link>
-					</li>
-					<li>
-						<Link
-							target='blank'
-							href='#'
-							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
+							<Button variant='link' className=''>
+								<Linkedin />
+							</Button>
+						</a>
+						<a
+							target='_blank'
+							href='https://github.com/lethucthanhtu/'
+							className='transition hover:scale-125'
 						>
-							Terms & Conditions
-						</Link>
-					</li>
-					<li>
-						<Link
-							target='blank'
-							href='#'
-							className='text-sm font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-200'
+							<Button variant='link' className=''>
+								<Github />
+							</Button>
+						</a>
+						<a
+							target='_blank'
+							href='https://www.facebook.com/ltttu'
+							className='transition hover:scale-125'
 						>
-							Refund Policy
-						</Link>
-					</li>
-				</ul>
-			</div>
-		</div>
+							<Button variant='link' className=''>
+								<Facebook />
+							</Button>
+						</a>
+					</div>
+				</div>
+			</footer>
+		</>
 	);
 }
