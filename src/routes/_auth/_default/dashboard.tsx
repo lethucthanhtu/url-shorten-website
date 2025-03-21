@@ -18,7 +18,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Link } from 'lucide-react';
 import { getURLColumns } from '@/components/DataTable/urlColumns';
 
-export const Route = createFileRoute('/_auth/dashboard')({
+export const Route = createFileRoute('/_auth/_default/dashboard')({
 	component: RouteComponent,
 });
 

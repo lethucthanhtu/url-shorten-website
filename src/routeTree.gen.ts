@@ -16,10 +16,11 @@ import { Route as UserImport } from './routes/_user'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as RedirectIdImport } from './routes/_redirect.$id'
-import { Route as AuthSettingsImport } from './routes/_auth/settings'
-import { Route as AuthDashboardImport } from './routes/_auth/dashboard'
-import { Route as AuthLinkIdImport } from './routes/_auth/link.$id'
+import { Route as AuthDefaultImport } from './routes/_auth/_default'
+import { Route as AuthDefaultSettingsImport } from './routes/_auth/_default/settings'
+import { Route as AuthDefaultDashboardImport } from './routes/_auth/_default/dashboard'
 import { Route as legacyLocaleLocaleImport } from './routes/(legacy)/_locale.$locale'
+import { Route as AuthDefaultLinkIdImport } from './routes/_auth/_default/link.$id'
 
 // Create/Update Routes
 
@@ -51,28 +52,33 @@ const RedirectIdRoute = RedirectIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthSettingsRoute = AuthSettingsImport.update({
+const AuthDefaultRoute = AuthDefaultImport.update({
+  id: '/_default',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthDefaultSettingsRoute = AuthDefaultSettingsImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthDefaultRoute,
 } as any)
 
-const AuthDashboardRoute = AuthDashboardImport.update({
+const AuthDefaultDashboardRoute = AuthDefaultDashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthRoute,
-} as any)
-
-const AuthLinkIdRoute = AuthLinkIdImport.update({
-  id: '/link/$id',
-  path: '/link/$id',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthDefaultRoute,
 } as any)
 
 const legacyLocaleLocaleRoute = legacyLocaleLocaleImport.update({
   id: '/(legacy)/_locale/$locale',
   path: '/$locale',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AuthDefaultLinkIdRoute = AuthDefaultLinkIdImport.update({
+  id: '/link/$id',
+  path: '/link/$id',
+  getParentRoute: () => AuthDefaultRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -107,18 +113,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/dashboard': {
-      id: '/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardImport
-      parentRoute: typeof AuthImport
-    }
-    '/_auth/settings': {
-      id: '/_auth/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthSettingsImport
+    '/_auth/_default': {
+      id: '/_auth/_default'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthDefaultImport
       parentRoute: typeof AuthImport
     }
     '/_redirect/$id': {
@@ -135,52 +134,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof legacyLocaleLocaleImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/link/$id': {
-      id: '/_auth/link/$id'
+    '/_auth/_default/dashboard': {
+      id: '/_auth/_default/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthDefaultDashboardImport
+      parentRoute: typeof AuthDefaultImport
+    }
+    '/_auth/_default/settings': {
+      id: '/_auth/_default/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthDefaultSettingsImport
+      parentRoute: typeof AuthDefaultImport
+    }
+    '/_auth/_default/link/$id': {
+      id: '/_auth/_default/link/$id'
       path: '/link/$id'
       fullPath: '/link/$id'
-      preLoaderRoute: typeof AuthLinkIdImport
-      parentRoute: typeof AuthImport
+      preLoaderRoute: typeof AuthDefaultLinkIdImport
+      parentRoute: typeof AuthDefaultImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthDefaultRouteChildren {
+  AuthDefaultDashboardRoute: typeof AuthDefaultDashboardRoute
+  AuthDefaultSettingsRoute: typeof AuthDefaultSettingsRoute
+  AuthDefaultLinkIdRoute: typeof AuthDefaultLinkIdRoute
+}
+
+const AuthDefaultRouteChildren: AuthDefaultRouteChildren = {
+  AuthDefaultDashboardRoute: AuthDefaultDashboardRoute,
+  AuthDefaultSettingsRoute: AuthDefaultSettingsRoute,
+  AuthDefaultLinkIdRoute: AuthDefaultLinkIdRoute,
+}
+
+const AuthDefaultRouteWithChildren = AuthDefaultRoute._addFileChildren(
+  AuthDefaultRouteChildren,
+)
+
 interface AuthRouteChildren {
-  AuthDashboardRoute: typeof AuthDashboardRoute
-  AuthSettingsRoute: typeof AuthSettingsRoute
-  AuthLinkIdRoute: typeof AuthLinkIdRoute
+  AuthDefaultRoute: typeof AuthDefaultRouteWithChildren
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthDashboardRoute: AuthDashboardRoute,
-  AuthSettingsRoute: AuthSettingsRoute,
-  AuthLinkIdRoute: AuthLinkIdRoute,
+  AuthDefaultRoute: AuthDefaultRouteWithChildren,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof UserRoute
+  '': typeof AuthDefaultRouteWithChildren
   '/authen': typeof AuthenRoute
-  '/dashboard': typeof AuthDashboardRoute
-  '/settings': typeof AuthSettingsRoute
   '/$id': typeof RedirectIdRoute
   '/$locale': typeof legacyLocaleLocaleRoute
-  '/link/$id': typeof AuthLinkIdRoute
+  '/dashboard': typeof AuthDefaultDashboardRoute
+  '/settings': typeof AuthDefaultSettingsRoute
+  '/link/$id': typeof AuthDefaultLinkIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof UserRoute
+  '': typeof AuthDefaultRouteWithChildren
   '/authen': typeof AuthenRoute
-  '/dashboard': typeof AuthDashboardRoute
-  '/settings': typeof AuthSettingsRoute
   '/$id': typeof RedirectIdRoute
   '/$locale': typeof legacyLocaleLocaleRoute
-  '/link/$id': typeof AuthLinkIdRoute
+  '/dashboard': typeof AuthDefaultDashboardRoute
+  '/settings': typeof AuthDefaultSettingsRoute
+  '/link/$id': typeof AuthDefaultLinkIdRoute
 }
 
 export interface FileRoutesById {
@@ -189,11 +214,12 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_user': typeof UserRoute
   '/authen': typeof AuthenRoute
-  '/_auth/dashboard': typeof AuthDashboardRoute
-  '/_auth/settings': typeof AuthSettingsRoute
+  '/_auth/_default': typeof AuthDefaultRouteWithChildren
   '/_redirect/$id': typeof RedirectIdRoute
   '/(legacy)/_locale/$locale': typeof legacyLocaleLocaleRoute
-  '/_auth/link/$id': typeof AuthLinkIdRoute
+  '/_auth/_default/dashboard': typeof AuthDefaultDashboardRoute
+  '/_auth/_default/settings': typeof AuthDefaultSettingsRoute
+  '/_auth/_default/link/$id': typeof AuthDefaultLinkIdRoute
 }
 
 export interface FileRouteTypes {
@@ -202,20 +228,20 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/authen'
-    | '/dashboard'
-    | '/settings'
     | '/$id'
     | '/$locale'
+    | '/dashboard'
+    | '/settings'
     | '/link/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
     | '/authen'
-    | '/dashboard'
-    | '/settings'
     | '/$id'
     | '/$locale'
+    | '/dashboard'
+    | '/settings'
     | '/link/$id'
   id:
     | '__root__'
@@ -223,11 +249,12 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_user'
     | '/authen'
-    | '/_auth/dashboard'
-    | '/_auth/settings'
+    | '/_auth/_default'
     | '/_redirect/$id'
     | '/(legacy)/_locale/$locale'
-    | '/_auth/link/$id'
+    | '/_auth/_default/dashboard'
+    | '/_auth/_default/settings'
+    | '/_auth/_default/link/$id'
   fileRoutesById: FileRoutesById
 }
 
@@ -273,9 +300,7 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
-        "/_auth/dashboard",
-        "/_auth/settings",
-        "/_auth/link/$id"
+        "/_auth/_default"
       ]
     },
     "/_user": {
@@ -284,13 +309,14 @@ export const routeTree = rootRoute
     "/authen": {
       "filePath": "authen.tsx"
     },
-    "/_auth/dashboard": {
-      "filePath": "_auth/dashboard.tsx",
-      "parent": "/_auth"
-    },
-    "/_auth/settings": {
-      "filePath": "_auth/settings.tsx",
-      "parent": "/_auth"
+    "/_auth/_default": {
+      "filePath": "_auth/_default.tsx",
+      "parent": "/_auth",
+      "children": [
+        "/_auth/_default/dashboard",
+        "/_auth/_default/settings",
+        "/_auth/_default/link/$id"
+      ]
     },
     "/_redirect/$id": {
       "filePath": "_redirect.$id.tsx"
@@ -298,9 +324,17 @@ export const routeTree = rootRoute
     "/(legacy)/_locale/$locale": {
       "filePath": "(legacy)/_locale.$locale.tsx"
     },
-    "/_auth/link/$id": {
-      "filePath": "_auth/link.$id.tsx",
-      "parent": "/_auth"
+    "/_auth/_default/dashboard": {
+      "filePath": "_auth/_default/dashboard.tsx",
+      "parent": "/_auth/_default"
+    },
+    "/_auth/_default/settings": {
+      "filePath": "_auth/_default/settings.tsx",
+      "parent": "/_auth/_default"
+    },
+    "/_auth/_default/link/$id": {
+      "filePath": "_auth/_default/link.$id.tsx",
+      "parent": "/_auth/_default"
     }
   }
 }

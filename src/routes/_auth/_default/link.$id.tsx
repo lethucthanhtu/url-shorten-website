@@ -38,7 +38,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 
-export const Route = createFileRoute('/_auth/link/$id')({
+export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
 	notFoundComponent: NotFound,
 	errorComponent: NotFound,
