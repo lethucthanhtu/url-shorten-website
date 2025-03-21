@@ -63,7 +63,9 @@ export default function UrlAction({ url, fetchURLs }: UrlActionProps) {
 					<DropdownMenuSeparator />
 					<DropdownMenuItem
 						onClick={() =>
-							navigator.clipboard.writeText(makeURL(url.shorten_url))
+							navigator.clipboard.writeText(
+								makeURL(url.custom_url || url.shorten_url)
+							)
 						}
 					>
 						<Copy />
