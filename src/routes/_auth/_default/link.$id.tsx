@@ -210,7 +210,7 @@ function RouteComponent() {
 							<CardContent className='h-full mt-4 flex flex-col gap-4'>
 								<CardDescription className='md:ml-4 flex md:gap-8 justify-between md:justify-start items-center'>
 									<Globe className='h-full scale-[200%] rounded-full hidden md:block' />
-									<div className='text-end md:text-start'>
+									<div className='text-start w-full'>
 										<h3 className=''>
 											<a target='_blank' href={URL} className=''>
 												<Button
