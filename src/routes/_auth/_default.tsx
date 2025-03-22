@@ -11,7 +11,9 @@ function RouteComponent() {
 		<>
 			<main className='min-h-screen flex flex-col justify-between'>
 				<Header className='' />
-				<Outlet />
+				<div className='mx-4 my-4 md:mx-0'>
+					<Outlet />
+				</div>
 				<Footer className='' />
 			</main>
 		</>

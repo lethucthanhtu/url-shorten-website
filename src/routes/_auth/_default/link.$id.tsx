@@ -129,7 +129,7 @@ function RouteComponent() {
 
 	return (
 		<>
-			<div className='flex flex-col mx-12 my-4 justify-center items-center gap-8'>
+			<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
 				{loadingURL || loadingStats || loadingDelete ? (
 					<>
 						<BeatLoader
@@ -149,17 +149,18 @@ function RouteComponent() {
 						</div>
 						<Card className='w-full'>
 							<CardHeader className='w-full'>
-								<div className='flex justify-between items-center'>
+								<div className='flex flex-col md:flex-row gap-4 justify-between items-center'>
 									<CardTitle className='capitalize text-3xl'>
 										{url?.title || 'untitled'}
 									</CardTitle>
-									<div className=' flex gap-2 justify-center items-center'>
+									<div className='flex gap-2 justify-center items-center'>
 										<Button
 											variant='default'
 											onClick={() => setIsUpdateDialogOpen(true)}
 											className='capitalize'
 										>
-											<Edit className='' /> edit
+											<Edit className='' />
+											<span className='capitalize hidden md:block'>edit</span>
 										</Button>
 										<Button
 											variant='default'
@@ -167,29 +168,31 @@ function RouteComponent() {
 											className='capitalize'
 										>
 											{copy ? <Check className='' /> : <Copy className='' />}
-											copy
+											<span className='capitalize hidden md:block'>copy</span>
 										</Button>
 										<Button
 											variant='default'
 											onClick={() => setIsShareCodeDialogOpen(true)}
 											className='capitalize'
 										>
-											<Share className='' /> share
+											<Share className='' />
+											<span className='capitalize hidden md:block'>share</span>
 										</Button>
 										<Button
 											variant='destructive'
 											onClick={handleDelete}
 											className='capitalize'
 										>
-											<Trash className='' /> remove
+											<Trash className='' />
+											<span className='capitalize hidden md:block'>remove</span>
 										</Button>
 									</div>
 								</div>
 							</CardHeader>
 							<CardContent className='h-full mt-4 flex flex-col gap-4'>
-								<CardDescription className='ml-4 flex gap-8 justify-start items-center'>
-									<Globe className='h-full scale-[200%] rounded-full' />
-									<div className=''>
+								<CardDescription className='md:ml-4 flex md:gap-8 justify-between md:justify-start items-center'>
+									<Globe className='h-full scale-[200%] rounded-full hidden md:block' />
+									<div className='text-end md:text-start'>
 										<h3 className=''>
 											<a target='_blank' href={URL} className=''>
 												<Button
@@ -212,15 +215,15 @@ function RouteComponent() {
 								</CardDescription>
 								<Separator className='' />
 							</CardContent>
-							<CardFooter className=' flex gap-2 justify-start items-center'>
+							<CardFooter className='flex gap-2 justify-start items-center'>
 								<Calendar />{' '}
 								{new Date(url?.created_at || '').toLocaleString('en-GB', {
 									timeZone: 'UTC',
 								})}
 							</CardFooter>
 						</Card>
-						<div className='w-full flex justify-between items-start gap-4'>
-							<Card className='basis-1/3 h-full sticky top-[5.75rem]'>
+						<div className='w-full flex flex-col md:flex-row md:justify-between items-start gap-4'>
+							<Card className='md:basis-1/3 w-full h-full md:sticky top-[5.75rem]'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize text-2xl text-center'>
 										QR code
@@ -241,7 +244,7 @@ function RouteComponent() {
 									</Button>
 								</CardFooter>
 							</Card>
-							<Card className='basis-2/3 h-full'>
+							<Card className='md:basis-2/3 h-full'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize text-2xl'>
 										engagements
@@ -254,16 +257,16 @@ function RouteComponent() {
 											chartData={engagementChartData}
 											className=''
 										/>
-										<div className='flex gap-4 justify-center items-center'>
+										<div className='flex flex-col md:flex-row gap-4 justify-center items-center'>
 											<LTPieChart
 												chartConfig={locationChartConfig}
 												chartData={pieChartData}
-												className='basis-1/2'
+												className='md:basis-1/2'
 											/>
 											<LTPieChart
 												chartConfig={locationChartConfig}
 												chartData={pieChartData}
-												className='basis-1/2'
+												className='md:basis-1/2'
 											/>
 										</div>
 									</CardDescription>

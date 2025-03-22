@@ -77,19 +77,21 @@ function RouteComponent() {
 		<>
 			<div className='min-h-screen flex flex-col justify-between'>
 				<Header className='' />
-				<div className='flex flex-col h-[90vh] md:h-full justify-start items-center gap-8 md:gap-16 mx-4'>
+				<div className='flex flex-col h-[50%] md:h-full justify-start items-center gap-8 md:gap-16 mx-4'>
 					<span className='flex flex-col gap-4 md:gap-8'>
-						<h1 className='text-3xl md:text-6xl font-bold text-center flex gap-4'>
-							Shorten Your
+						<h1
+							className='text-3xl sm:text-4xl md:text-6xl font-bold text-center flex flex-col md:flex-row justify-center items-center gap-4'
+							aria-label='shorten your long link :)'
+						>
+							<span className='text-nowrap'>Shorten Your</span>
 							<span className='flex text-nowrap'>
 								L
 								<BounceText
 									text='oooo'
-									className='text-3xl md:text-6xl font-bold text-center'
+									className='text-3xl sm:text-4xl md:text-6xl font-bold text-center'
 								/>
-								ng
+								ng Links {':)'}
 							</span>
-							Links {':)'}
 						</h1>
 
 						<h4 className='text-center'>
@@ -109,7 +111,7 @@ function RouteComponent() {
 
 					<form
 						onSubmit={handleShorten}
-						className='w-full flex flex-col md:flex-row justify-center items-center gap-2	'
+						className='w-full flex flex-col md:flex-row justify-center items-center gap-8 md:gap-2	'
 					>
 						<Input
 							type='url'

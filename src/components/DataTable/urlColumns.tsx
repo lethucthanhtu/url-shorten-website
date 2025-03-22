@@ -1,13 +1,14 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowUpDown, ExternalLink } from 'lucide-react';
+import { ArrowUpDown, Copy, ExternalLink, FileSearch2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { makeURL } from '@/lib/utils';
 import { Url } from '@/lib/apiUrls';
 import UrlAction from '@/components/DataTable/urlAction';
 import { Badge } from '@/components/ui/badge';
+import { Link } from '@tanstack/react-router';
 
-export const getURLColumns = (
+export const get_md_URLColumns = (
 	fetchURLs: () => Promise<unknown>
 ): ColumnDef<Url>[] => [
 	{
@@ -200,6 +201,117 @@ export const getURLColumns = (
 			return (
 				<>
 					<UrlAction url={url} fetchURLs={fetchURLs} />
+				</>
+			);
+		},
+	},
+];
+
+export const get_sm_URLColumns = (
+	fetchURLs: () => Promise<unknown>
+): ColumnDef<Url>[] => [
+	// {
+	// 	id: 'select',
+	// 	header: ({ table }) => (
+	// 		<Checkbox
+	// 			checked={
+	// 				table.getIsAllPageRowsSelected() ||
+	// 				(table.getIsSomePageRowsSelected() && 'indeterminate')
+	// 			}
+	// 			onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+	// 			aria-label='Select all'
+	// 			className=''
+	// 		/>
+	// 	),
+	// 	cell: ({ row }) => (
+	// 		<Checkbox
+	// 			checked={row.getIsSelected()}
+	// 			onCheckedChange={(value) => row.toggleSelected(!!value)}
+	// 			aria-label='Select row'
+	// 			className=''
+	// 		/>
+	// 	),
+	// 	enableSorting: false,
+	// 	enableHiding: false,
+	// },
+	{
+		accessorKey: 'title',
+		header: ({ column }) => (
+			<>
+				<Button
+					variant='ghost'
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+					className='capitalize'
+				>
+					title
+					<ArrowUpDown />
+				</Button>
+			</>
+		),
+		// cell: ({ row }) => {
+		// 	return (
+		// 		<>
+		// 			<span className='text-wrap'>{row.original.title}</span>
+		// 			<div className=''></div>
+		// 		</>
+		// 	);
+		// },
+	},
+	{
+		accessorKey: 'shorten_url',
+		header: ({ column }) => (
+			<>
+				<div className='flex justify-center'>
+					<Button
+						variant='ghost'
+						onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+						className='capitalize'
+					>
+						shorten URL
+						<ArrowUpDown />
+					</Button>
+				</div>
+			</>
+		),
+		cell: ({ row }) => {
+			const url = row.original;
+			const showURL = url.custom_url || url.shorten_url;
+
+			return (
+				<>
+					<div
+						onClick={() => navigator.clipboard.writeText(makeURL(showURL))}
+						className='text-center flex gap-2 justify-end items-center mr-4'
+					>
+						<Badge variant='secondary'>{showURL}</Badge>
+						<Copy className='size-4' />
+					</div>
+				</>
+			);
+		},
+	},
+	{
+		id: 'actions',
+		header: () => {
+			return (
+				<>
+					<div className='flex justify-center'>
+						<span className='text-center capitalize'>actions</span>
+					</div>
+				</>
+			);
+		},
+		enableHiding: false,
+		cell: ({ row }) => {
+			const url = row.original;
+
+			return (
+				<>
+					<Link to='/link/$id' params={{ id: url.shorten_url }}>
+						<Button variant='outline' size='icon' className='capitalize'>
+							<FileSearch2 />
+						</Button>
+					</Link>
 				</>
 			);
 		},

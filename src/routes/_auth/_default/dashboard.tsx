@@ -16,7 +16,10 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import DataTable from '@/components/DataTable/dataTable';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Link } from 'lucide-react';
-import { getURLColumns } from '@/components/DataTable/urlColumns';
+import {
+	get_md_URLColumns,
+	get_sm_URLColumns,
+} from '@/components/DataTable/urlColumns';
 
 export const Route = createFileRoute('/_auth/_default/dashboard')({
 	component: RouteComponent,
@@ -51,11 +54,12 @@ function RouteComponent() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [urls?.length]);
 
-	const columns = useMemo(() => getURLColumns(fnUrls), [fnUrls]);
+	const largeScreenColumns = useMemo(() => get_md_URLColumns(fnUrls), [fnUrls]);
+	const smallScreenColumns = useMemo(() => get_sm_URLColumns(fnUrls), [fnUrls]);
 
 	return (
 		<>
-			{loading && loadingClicks ? (
+			{loading || loadingClicks ? (
 				<>
 					<div className='size-full flex justify-center items-center'>
 						<BeatLoader
@@ -66,9 +70,9 @@ function RouteComponent() {
 				</>
 			) : (
 				<>
-					<div className='flex flex-col mx-12 my-4 justify-center items-center gap-8'>
-						<div className='flex justify-center items-center gap-4 w-full'>
-							<Card className='basis-1/2'>
+					<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
+						<div className='flex flex-col md:flex-row justify-center items-center gap-4 w-full'>
+							<Card className='w-full md:basis-1/2'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize'>links created</CardTitle>
 								</CardHeader>
@@ -76,7 +80,7 @@ function RouteComponent() {
 									<span>{urls?.length}</span>
 								</CardContent>
 							</Card>
-							<Card className='basis-1/2'>
+							<Card className='w-full md:basis-1/2'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize'>total clicks</CardTitle>
 								</CardHeader>
@@ -89,7 +93,7 @@ function RouteComponent() {
 							<Card className='w-full'>
 								<CardHeader className=''>
 									<div className='w-full flex justify-between'>
-										<h1 className='capitalize text-4xl font-extrabold inline-flex  justify-center items-center gap-2'>
+										<h1 className='capitalize text-4xl font-extrabold md:inline-flex justify-center items-center gap-2 hidden'>
 											My links
 											<Link className='size-6' />
 										</h1>
@@ -98,10 +102,25 @@ function RouteComponent() {
 								</CardHeader>
 								<CardContent>
 									{urls && (
-										<DataTable data={urls} columns={columns} footerHidden />
+										<>
+											<div className='hidden md:block'>
+												<DataTable
+													data={urls}
+													columns={largeScreenColumns}
+													footerHidden
+												/>
+											</div>
+											<div className='md:hidden'>
+												<DataTable
+													data={urls}
+													columns={smallScreenColumns}
+													footerHidden
+												/>
+											</div>
+										</>
 									)}
 								</CardContent>
-								<CardFooter>end test table</CardFooter>
+								<CardFooter className=''></CardFooter>
 							</Card>
 						</div>
 					</div>

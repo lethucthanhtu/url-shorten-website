@@ -31,17 +31,20 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 type DataTableProps<TData, TValue> = {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	footerHidden?: boolean;
+	className?: string;
 };
 
 export default function DataTable<TData, TValue>({
 	data,
 	columns,
 	footerHidden = false,
+	className,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -73,7 +76,12 @@ export default function DataTable<TData, TValue>({
 
 	return (
 		<>
-			<div className='flex items-center py-4'>
+			<div
+				className={cn(
+					'flex flex-col-reverse md:flex-row gap-4 md:gap-2 items-center py-4',
+					className
+				)}
+			>
 				<div className='w-full flex gap-2'>
 					<Input
 						placeholder={`Filter ${filter.replace(/_/g, ' ')}...`}
