@@ -63,7 +63,7 @@ export const storeClicks = async ({
 	if (!original_url) throw new Error('StoreClick: Original URL required');
 
 	const res = parser.getResult();
-	const device = res.device.type || 'others'; // Default to desktop if type is not detected
+	const device = res.device.type || 'desktop'; // Default to desktop if type is not detected
 
 	try {
 		const response = await axios.get(
