@@ -56,10 +56,9 @@ export const storeClicks = async ({
 	const device = res.device.type || 'desktop'; // Default to desktop if type is not detected
 
 	try {
-		const response = await axios.get(
-			import.meta.env.VITE_IP_API_URL || 'https://ip-api.com/json/'
-		);
-		const { regionName: city, country } = response.data;
+		const response = await fetch('https://ip-api.com/json/');
+		const data = await response.json();
+		const { regionName: city, country } = data;
 
 		// Record the click
 		await supabase.from('clicks').insert({
