@@ -35,8 +35,9 @@ import {
 	Trash,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { BeatLoader } from 'react-spinners';
+import { toPng } from 'html-to-image';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -53,6 +54,7 @@ function RouteComponent() {
 	const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState<boolean>(false);
 	const [isShareCodeDialogOpen, setIsShareCodeDialogOpen] =
 		useState<boolean>(false);
+	const qrRef = useRef<HTMLDivElement>(null);
 
 	const {
 		loading: loadingURL,
@@ -108,6 +110,21 @@ function RouteComponent() {
 
 	const handleDelete = () => {
 		fnDelete(url?.id).then(() => navigate({ to: '/dashboard', replace: true }));
+	};
+
+	const handleDownload = () => {
+		if (qrRef.current) {
+			toPng(qrRef.current)
+				.then((dataUrl) => {
+					const link = document.createElement('a');
+					link.download = 'qr-code.png';
+					link.href = dataUrl;
+					link.click();
+				})
+				.catch((err) => {
+					console.error('Failed to download QR code', err);
+				});
+		}
 	};
 
 	const pieChartData = [
@@ -230,7 +247,10 @@ function RouteComponent() {
 									</CardTitle>
 								</CardHeader>
 								<CardContent className=''>
-									<CardDescription className='aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition hover:scale-100'>
+									<CardDescription
+										ref={qrRef}
+										className='aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition hover:scale-100'
+									>
 										<QRCodeSVG
 											value={URL}
 											className='size-full aspect-square ring-2 ring-black dark:ring-white rounded-xl'
@@ -238,7 +258,11 @@ function RouteComponent() {
 									</CardDescription>
 								</CardContent>
 								<CardFooter className='w-full'>
-									<Button variant='default' className='w-full'>
+									<Button
+										variant='default'
+										className='w-full'
+										onClick={handleDownload}
+									>
 										<Download className='' />
 										Download as .PNG
 									</Button>
