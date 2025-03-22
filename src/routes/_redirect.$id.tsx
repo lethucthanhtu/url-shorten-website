@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTheme } from '@/contexts/ThemeContext';
 import useFetch from '@/hooks/useFetch';
 import { storeClicks } from '@/lib/apiClicks';
-import { getLongUrl } from '@/lib/apiUrls';
+import { getRedirectUrl } from '@/lib/apiUrls';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { BeatLoader } from 'react-spinners';
@@ -19,7 +19,7 @@ function RouteComponent() {
 
 	const { currentTheme } = useTheme();
 
-	const { loading, error, data, fn } = useFetch(() => getLongUrl(id));
+	const { loading, error, data, fn } = useFetch(() => getRedirectUrl(id));
 
 	const {
 		// loading: loadingStats,
@@ -38,8 +38,7 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!loading && data && !error) {
-			fnStats()
-				.finally(() => window.location.assign(data.original_url));
+			fnStats().finally(() => window.location.assign(data.original_url));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, data, error]);
@@ -66,10 +65,12 @@ function RouteComponent() {
 									color={currentTheme === 'dark' ? 'white' : 'black'}
 								/>
 							</h1>
-							<p className='text-gray-500 text-center'>
-								Next stop
-								<Badge className='ml-2'>{displayURL}</Badge>
-							</p>
+							{displayURL && (
+								<p className='text-gray-500 text-center'>
+									Next stop
+									<Badge className='ml-2'>{displayURL}</Badge>
+								</p>
+							)}
 						</>
 					) : (
 						<>
