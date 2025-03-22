@@ -1,7 +1,6 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import NotFound from '@/components/notFound';
-import { handleInspect } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { Theme } from '@/contexts/ThemeContext';
 
@@ -25,10 +24,10 @@ function RootComponent() {
 	const root = window.document.documentElement;
 	const currentTheme = root.classList[1] as Theme;
 
-	// Inspect prevent handler
-	useEffect(() => {
-		if (import.meta.env.PROD) handleInspect();
-	}, []);
+	// // Inspect prevent handler
+	// useEffect(() => {
+	// 	if (import.meta.env.PROD) handleInspect();
+	// }, []);
 
 	return (
 		<>
