@@ -1,17 +1,14 @@
-import { Url } from '@/lib/apiUrls';
 import { Badge } from '../ui/badge';
 import { makeURL } from '@/lib/utils';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 
-export default function ShortenLink({ url }: { url: Url }) {
-	const shorten_url = url.custom_url || url.shorten_url;
-
+export default function ShortenLink({ url }: { url: string }) {
 	const [copy, setCopy] = useState(false);
 
 	const handleCopy = () => {
 		setCopy(true);
-		navigator.clipboard.writeText(makeURL(shorten_url));
+		navigator.clipboard.writeText(makeURL(url));
 		setTimeout(() => {
 			setCopy(false);
 		}, 1000);
@@ -23,7 +20,7 @@ export default function ShortenLink({ url }: { url: Url }) {
 				onClick={handleCopy}
 				className='flex justify-center cursor-pointer items-center gap-2'
 			>
-				<Badge variant='secondary'>{shorten_url}</Badge>
+				<Badge variant='secondary'>{url}</Badge>
 				{copy ? <Check className='size-4' /> : <Copy className='size-4' />}
 			</div>
 		</>

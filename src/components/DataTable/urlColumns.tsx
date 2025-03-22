@@ -113,7 +113,7 @@ export const get_md_URLColumns = (
 			const url = row.original;
 			return (
 				<>
-					<ShortenLink url={url} />
+					<ShortenLink url={url.shorten_url} />
 				</>
 			);
 		},
@@ -136,13 +136,13 @@ export const get_md_URLColumns = (
 		),
 		cell: ({ row }) => {
 			const url = row.original;
-			const custom_url = url.custom_url;
+			const custom_url = url.custom_url || url.shorten_url;
 
 			return (
 				<>
 					{custom_url ? (
 						<>
-							<ShortenLink url={url} />
+							<ShortenLink url={custom_url} />
 						</>
 					) : (
 						<></>
