@@ -20,6 +20,7 @@ import {
 	get_md_URLColumns,
 	get_sm_URLColumns,
 } from '@/components/DataTable/urlColumns';
+import CountUp from 'react-countup';
 
 export const Route = createFileRoute('/_auth/_default/dashboard')({
 	component: RouteComponent,
@@ -76,17 +77,19 @@ function RouteComponent() {
 								<CardHeader className=''>
 									<CardTitle className='capitalize'>links created</CardTitle>
 								</CardHeader>
-								<CardContent className=''>
-									<span>{urls?.length}</span>
+								<CardContent className='flex justify-end items-center'>
+									<CountUp end={urls?.length || 0} className='text-3xl' />
 								</CardContent>
+								{/* <CardFooter className=''></CardFooter> */}
 							</Card>
 							<Card className='w-full md:basis-1/2'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize'>total clicks</CardTitle>
 								</CardHeader>
-								<CardContent className=''>
-									<span>{clicks?.length}</span>
+								<CardContent className='flex justify-end items-center'>
+									<CountUp end={clicks?.length || 0} className='text-3xl' />
 								</CardContent>
+								{/* <CardFooter className=''></CardFooter> */}
 							</Card>
 						</div>
 						<div className='w-full flex justify-center items-center'>

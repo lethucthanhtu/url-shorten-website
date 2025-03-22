@@ -7,6 +7,7 @@ import { Url } from '@/lib/apiUrls';
 import UrlAction from '@/components/DataTable/urlAction';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@tanstack/react-router';
+import ShortenLink from '@/components/DataTable/shortenLinkCell';
 
 export const get_md_URLColumns = (
 	fetchURLs: () => Promise<unknown>
@@ -110,15 +111,9 @@ export const get_md_URLColumns = (
 		),
 		cell: ({ row }) => {
 			const url = row.original;
-			const shorten_url = url.shorten_url;
-
 			return (
 				<>
-					<div className='flex justify-center'>
-						<a href={makeURL(shorten_url)} className='text-center'>
-							<Badge variant='secondary'>{shorten_url}</Badge>
-						</a>
-					</div>
+					<ShortenLink url={url} />
 				</>
 			);
 		},
@@ -147,10 +142,14 @@ export const get_md_URLColumns = (
 				<>
 					{custom_url ? (
 						<>
-							<div className='flex justify-center'>
-								<a href={makeURL(custom_url + '')} className='text-center'>
-									<Badge variant='secondary'>{custom_url}</Badge>
-								</a>
+							<div
+								onClick={() =>
+									navigator.clipboard.writeText(makeURL(custom_url))
+								}
+								className='flex justify-center cursor-pointer items-center gap-2'
+							>
+								<Badge variant='secondary'>{custom_url}</Badge>
+								<Copy className='size-4' />
 							</div>
 						</>
 					) : (
@@ -200,7 +199,14 @@ export const get_md_URLColumns = (
 
 			return (
 				<>
-					<UrlAction url={url} fetchURLs={fetchURLs} />
+					<div className='flex gap-2'>
+						<Link to='/link/$id' params={{ id: url.shorten_url }}>
+							<Button variant='outline' size='default' className='capitalize'>
+								<FileSearch2 /> details
+							</Button>
+						</Link>
+						<UrlAction url={url} fetchURLs={fetchURLs} />
+					</div>
 				</>
 			);
 		},
