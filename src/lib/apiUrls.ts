@@ -77,6 +77,9 @@ export async function createUrl(
 ): Promise<Url> {
 	if (!user_id) throw new Error('CreateURL: User ID is required');
 
+	if (original_url.includes(window.location.origin))
+		throw new Error('Shorten the shorten URL? Nahhhhh');
+
 	const shorten_url = Math.random().toString(36).substring(2, 8);
 
 	let qr = null;
