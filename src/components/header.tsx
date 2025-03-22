@@ -26,6 +26,7 @@ type HeaderProps = {} & Omit<HTMLAttributes<HTMLElement>, ''>;
 export default function Header({ ...props }: HeaderProps) {
 	const { signOut, user } = useSession();
 	const navigate = useNavigate();
+	const { session } = useSession();
 
 	const handleSignOut = () => {
 		signOut();
@@ -51,13 +52,15 @@ export default function Header({ ...props }: HeaderProps) {
 							</Button>
 						</Link>
 					</NavigationMenuLink>
-					{/* <NavigationMenuLink asChild className=''>
-						<Link to='/dashboard' className=''>
-							<Button variant='outline' className=''>
-								dashboard
-							</Button>
-						</Link>
-					</NavigationMenuLink> */}
+					{session && (
+						<NavigationMenuLink asChild className=''>
+							<Link to='/dashboard' className=''>
+								<Button variant='outline' className=''>
+									dashboard
+								</Button>
+							</Link>
+						</NavigationMenuLink>
+					)}
 				</NavigationMenuList>
 			</NavigationMenu>
 

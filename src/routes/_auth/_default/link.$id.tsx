@@ -24,6 +24,7 @@ import {
 	ArrowLeft,
 	Calendar,
 	Check,
+	Clock,
 	Copy,
 	Download,
 	Edit,
@@ -335,13 +336,23 @@ function RouteComponent() {
 								</CardDescription>
 								<Separator className='' />
 							</CardContent>
-							<CardFooter className='flex gap-2 justify-start items-center'>
-								<Calendar />{' '}
-								<Badge variant='outline'>
-									{new Date(url?.created_at || '').toLocaleString('en-GB', {
-										timeZone: 'UTC',
-									})}
-								</Badge>
+							<CardFooter className='flex gap-4 justify-start items-center'>
+								<span className='flex gap-2 justify-center items-center'>
+									<Calendar />
+									<Badge variant='outline'>
+										{new Date(url?.created_at || '').toLocaleString('en-GB', {
+											timeZone: 'UTC',
+										})}
+									</Badge>
+								</span>
+								<span className='flex gap-2 justify-center items-center'>
+									<Clock />
+									<Badge variant='outline'>
+										{new Date(url?.updated_at || '').toLocaleString('en-GB', {
+											timeZone: 'UTC',
+										})}
+									</Badge>
+								</span>
 							</CardFooter>
 						</Card>
 						<div className='w-full flex flex-col md:flex-row md:justify-between items-start gap-4'>
@@ -351,11 +362,14 @@ function RouteComponent() {
 										QR code
 									</CardTitle>
 								</CardHeader>
-								<CardContent onClick={() => setQrShow(!qrShow)} className=''>
+								<CardContent
+									onClick={() => setQrShow(!qrShow)}
+									className='relative'
+								>
 									<CardDescription
 										ref={qrRef}
 										className={cn(
-											'relative aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition ',
+											'aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition ',
 											qrShow ? 'blur-xl' : 'blur-none hover:scale-100'
 										)}
 									>
