@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { updateUrl, Url } from '@/lib/apiUrls';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import {
 	DropdownMenuContent,
@@ -23,6 +23,7 @@ import {
 import { ChevronDown, LoaderCircle } from 'lucide-react';
 import useFetch from '@/hooks/useFetch';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 type EditDialogProps = {
 	isOpen: boolean;
@@ -38,8 +39,6 @@ export default function EditDialog({
 	url,
 	fetchURLs,
 }: EditDialogProps) {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [error, setError] = useState<Error | null>(null);
 	const [active, setActive] = useState(url.active ? 'active' : 'inactive');
 
 	type FormData = {} & Pick<Url, 'title' | 'custom_url' | 'active'>;
@@ -55,6 +54,10 @@ export default function EditDialog({
 			.refine(
 				(value) => value === '' || /^[a-zA-Z0-9-_]+$/.test(value),
 				'Must be alphanumeric'
+			)
+			.refine(
+				(value) => value !== url.shorten_url,
+				"Really? That's your custom url?"
 			)
 			.nullable()
 			.optional(),
@@ -73,7 +76,8 @@ export default function EditDialog({
 
 	const handleUpdateUrl = async () => {
 		try {
-			await schema.parse(formData);
+			schema.parse(formData);
+
 			await fnUpdate()
 				.then(() => fetchURLs())
 				.then(() => {
@@ -81,7 +85,11 @@ export default function EditDialog({
 					onClose();
 				});
 		} catch (error) {
-			setError(error as Error);
+			(error as ZodError).errors.map((error) => {
+				toast('Error', {
+					description: error.message,
+				});
+			});
 		}
 	};
 
