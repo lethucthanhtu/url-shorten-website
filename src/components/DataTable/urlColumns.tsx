@@ -1,15 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowUpDown, Copy, ExternalLink, FileSearch2 } from 'lucide-react';
+import { ArrowUpDown, ExternalLink, FileSearch2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn, makeURL } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Url } from '@/lib/apiUrls';
 import UrlAction from '@/components/DataTable/urlAction';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@tanstack/react-router';
 import ShortenLink from '@/components/DataTable/shortenLinkCell';
 
-export const get_md_URLColumns = (
+export const getURLColumns = (
 	fetchURLs: () => Promise<unknown>
 ): ColumnDef<Url>[] => [
 	{
@@ -60,7 +60,7 @@ export const get_md_URLColumns = (
 					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
 					className='capitalize'
 				>
-					active
+					status
 					<ArrowUpDown />
 				</Button>
 			</>
@@ -217,6 +217,39 @@ export const get_md_URLColumns = (
 		},
 	},
 	{
+		id: 'updated_at',
+		accessorKey: 'updated_at',
+		enableHiding: true,
+		header: ({ column }) => (
+			<>
+				<div className=''>
+					<Button
+						variant='ghost'
+						onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+						className='capitalize'
+					>
+						update date
+						<ArrowUpDown />
+					</Button>
+				</div>
+			</>
+		),
+		cell: ({ row }) => {
+			const url = row.original;
+			const updated_at = new Date(url.updated_at).toLocaleString('en-GB', {
+				timeZone: 'UTC',
+			});
+
+			return (
+				<>
+					<Badge variant='outline' className=''>
+						{updated_at}
+					</Badge>
+				</>
+			);
+		},
+	},
+	{
 		id: 'actions',
 		enableHiding: false,
 		cell: ({ row }) => {
@@ -227,131 +260,15 @@ export const get_md_URLColumns = (
 					<div className='flex gap-2'>
 						<Link to='/link/$id' params={{ id: url.shorten_url }}>
 							<Button variant='outline' size='default' className='capitalize'>
-								<FileSearch2 /> details
-							</Button>
-						</Link>
-						<UrlAction url={url} fetchURLs={fetchURLs} />
-					</div>
-				</>
-			);
-		},
-	},
-];
-
-export const get_sm_URLColumns = (
-	fetchURLs: () => Promise<unknown>
-): ColumnDef<Url>[] => [
-	// {
-	// 	id: 'select',
-	// 	header: ({ table }) => (
-	// 		<Checkbox
-	// 			checked={
-	// 				table.getIsAllPageRowsSelected() ||
-	// 				(table.getIsSomePageRowsSelected() && 'indeterminate')
-	// 			}
-	// 			onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-	// 			aria-label='Select all'
-	// 			className=''
-	// 		/>
-	// 	),
-	// 	cell: ({ row }) => (
-	// 		<Checkbox
-	// 			checked={row.getIsSelected()}
-	// 			onCheckedChange={(value) => row.toggleSelected(!!value)}
-	// 			aria-label='Select row'
-	// 			className=''
-	// 		/>
-	// 	),
-	// 	enableSorting: false,
-	// 	enableHiding: false,
-	// },
-	{
-		accessorKey: 'title',
-		header: ({ column }) => (
-			<>
-				<Button
-					variant='ghost'
-					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-					className='capitalize'
-				>
-					title
-					<ArrowUpDown />
-				</Button>
-			</>
-		),
-		// cell: ({ row }) => {
-		// 	return (
-		// 		<>
-		// 			<span className='text-wrap'>{row.original.title}</span>
-		// 			<div className=''></div>
-		// 		</>
-		// 	);
-		// },
-	},
-	{
-		accessorKey: 'shorten_url',
-		header: ({ column }) => (
-			<>
-				<div className='flex justify-center'>
-					<Button
-						variant='ghost'
-						onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-						className='capitalize'
-					>
-						shorten URL
-						<ArrowUpDown />
-					</Button>
-				</div>
-			</>
-		),
-		cell: ({ row }) => {
-			const url = row.original;
-			const showURL = url.custom_url || url.shorten_url;
-
-			return (
-				<>
-					<div
-						onClick={() => navigator.clipboard.writeText(makeURL(showURL))}
-						className='text-center flex gap-2 justify-end items-center mr-4'
-					>
-						<Badge variant='secondary'>{showURL}</Badge>
-						<Copy className='size-4' />
-					</div>
-				</>
-			);
-		},
-	},
-	{
-		id: 'actions',
-		// header: () => {
-		// 	return (
-		// 		<>
-		// 			<div className='flex justify-center'>
-		// 				<span className='text-center capitalize'>actions</span>
-		// 			</div>
-		// 		</>
-		// 	);
-		// },
-		enableHiding: false,
-		cell: ({ row }) => {
-			const url = row.original;
-
-			return (
-				<>
-					<div className='flex gap-2'>
-						<Link to='/link/$id' params={{ id: url.shorten_url }}>
-							<Button variant='outline' size='icon' className='capitalize'>
 								<FileSearch2 />
+								<span className='hidden md:block'>details</span>
 							</Button>
 						</Link>
-
-						<Button
-							variant='destructive'
-							onClick={() => fetchURLs()}
-							className='capitalize hidden'
-						>
-							remove
-						</Button>
+						<UrlAction
+							url={url}
+							fetchURLs={fetchURLs}
+							className='hidden md:block'
+						/>
 					</div>
 				</>
 			);

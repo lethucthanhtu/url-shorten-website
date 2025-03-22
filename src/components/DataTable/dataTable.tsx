@@ -15,6 +15,7 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
+	InitialTableState,
 	SortingState,
 	useReactTable,
 	VisibilityState,
@@ -38,6 +39,7 @@ type DataTableProps<TData, TValue> = {
 	data: TData[];
 	footerHidden?: boolean;
 	className?: string;
+	initialState?: InitialTableState;
 };
 
 export default function DataTable<TData, TValue>({
@@ -45,10 +47,15 @@ export default function DataTable<TData, TValue>({
 	columns,
 	footerHidden = false,
 	className,
+	initialState,
 }: DataTableProps<TData, TValue>) {
-	const [sorting, setSorting] = useState<SortingState>([]);
+	const [sorting, setSorting] = useState<SortingState>(
+		initialState?.sorting || []
+	);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+		initialState?.columnVisibility || {}
+	);
 	const [rowSelection, setRowSelection] = useState({});
 
 	const table = useReactTable({
@@ -62,6 +69,7 @@ export default function DataTable<TData, TValue>({
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
+		sortDescFirst: true,
 		state: {
 			sorting,
 			columnFilters,

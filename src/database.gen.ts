@@ -79,6 +79,7 @@ export type Database = {
           qr: string | null
           shorten_url: string
           title: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -90,6 +91,7 @@ export type Database = {
           qr?: string | null
           shorten_url: string
           title?: string | null
+          updated_at?: string
           user_id?: string
         }
         Update: {
@@ -101,6 +103,7 @@ export type Database = {
           qr?: string | null
           shorten_url?: string
           title?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

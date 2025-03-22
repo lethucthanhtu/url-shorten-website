@@ -131,7 +131,8 @@ export async function updateUrl({
 	active = true,
 }: UpdateUrlProps): Promise<Url> {
 	if (!id) throw new Error('URL ID is required');
-	console.log(id);
+
+	const now = new Date().toISOString().replace('T', ' ').replace('Z', '+00');
 
 	const { data, error } = await supabase
 		.from('urls')
@@ -139,6 +140,7 @@ export async function updateUrl({
 			title,
 			custom_url,
 			active,
+			updated_at: now,
 		})
 		.eq('id', id)
 		.select()
@@ -154,9 +156,11 @@ type UpdateActiveProps = {} & Pick<Url, 'id' | 'active'>;
 export async function updateActive({ id, active }: UpdateActiveProps) {
 	if (!id) throw new Error('URL ID is required');
 
+	const now = new Date().toISOString().replace('T', ' ').replace('Z', '+00');
+
 	const { data, error } = await supabase
 		.from('urls')
-		.update({ active })
+		.update({ active, updated_at: now })
 		.eq('id', id)
 		.select()
 		.single();

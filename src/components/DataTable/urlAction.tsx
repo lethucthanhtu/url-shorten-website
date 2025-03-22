@@ -27,9 +27,14 @@ import EditDialog from '@/components/DataTable/urlEditDialog';
 type UrlActionProps = {
 	url: Url;
 	fetchURLs: () => Promise<unknown>;
+	className?: string;
 };
 
-export default function UrlAction({ url, fetchURLs }: UrlActionProps) {
+export default function UrlAction({
+	url,
+	fetchURLs,
+	className,
+}: UrlActionProps) {
 	const [isQrCodeDialogOpen, setIsQrCodeDialogOpen] = useState<boolean>(false);
 	const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState<boolean>(false);
 	const {
@@ -48,7 +53,7 @@ export default function UrlAction({ url, fetchURLs }: UrlActionProps) {
 		<>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<Button variant='ghost' className='size-8 p-0'>
+					<Button variant='ghost' className={cn('size-8 p-0', className)}>
 						<span className='sr-only'>Open menu</span>
 						<MoreHorizontal />
 					</Button>

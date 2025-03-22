@@ -16,10 +16,7 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import DataTable from '@/components/DataTable/dataTable';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Link } from 'lucide-react';
-import {
-	get_md_URLColumns,
-	get_sm_URLColumns,
-} from '@/components/DataTable/urlColumns';
+import { getURLColumns } from '@/components/DataTable/urlColumns';
 import CountUp from 'react-countup';
 
 export const Route = createFileRoute('/_auth/_default/dashboard')({
@@ -55,8 +52,7 @@ function RouteComponent() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [urls?.length]);
 
-	const largeScreenColumns = useMemo(() => get_md_URLColumns(fnUrls), [fnUrls]);
-	const smallScreenColumns = useMemo(() => get_sm_URLColumns(fnUrls), [fnUrls]);
+	const largeScreenColumns = useMemo(() => getURLColumns(fnUrls), [fnUrls]);
 
 	return (
 		<>
@@ -111,13 +107,40 @@ function RouteComponent() {
 													data={urls}
 													columns={largeScreenColumns}
 													footerHidden
+													initialState={{
+														columnVisibility: {
+															updated_at: false,
+														},
+														sorting: [
+															{
+																id: 'updated_at',
+																desc: true,
+															},
+														],
+													}}
 												/>
 											</div>
 											<div className='md:hidden'>
 												<DataTable
 													data={urls}
-													columns={smallScreenColumns}
+													columns={largeScreenColumns}
 													footerHidden
+													initialState={{
+														columnVisibility: {
+															select: false,
+															updated_at: false,
+															original_url: false,
+															custom_url: false,
+															created_at: false,
+															active: false,
+														},
+														sorting: [
+															{
+																id: 'updated_at',
+																desc: true,
+															},
+														],
+													}}
 												/>
 											</div>
 										</>
