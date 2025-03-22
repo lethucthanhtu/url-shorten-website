@@ -44,9 +44,17 @@ function RouteComponent() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, data, error]);
 
+	const original_url =
+		data?.original_url.replace('https://', '').replace('http://', '') || '';
+	const displayLength = 50;
+	const displayURL =
+		original_url?.length > displayLength
+			? `${original_url?.substring(0, displayLength - 3)}...`
+			: original_url;
+
 	return (
 		<>
-			<article className=' min-h-screen flex justify-center items-center gap-16'>
+			<article className=' min-h-screen flex flex-col md:flex-row justify-center items-center gap-16'>
 				<Logo className='!rounded-2xl size-72 duration-300 transition hover:scale-110' />
 				<div className='space-y-3 flex flex-col gap-4'>
 					{!error ? (
@@ -60,7 +68,7 @@ function RouteComponent() {
 							</h1>
 							<p className='text-gray-500 text-center'>
 								Next stop
-								<Badge className='ml-2'>{data?.original_url}</Badge>
+								<Badge className='ml-2'>{displayURL}</Badge>
 							</p>
 						</>
 					) : (

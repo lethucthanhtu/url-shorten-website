@@ -68,8 +68,8 @@ export const storeClicks = async ({
 			country: country || 'unknown',
 			device: device,
 		});
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (error) {
-		console.error('Error fetching location data:', error);
 		// Record the click with unknown location data
 		await supabase.from('clicks').insert({
 			url_id: url_id,
