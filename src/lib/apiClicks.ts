@@ -55,14 +55,25 @@ export const storeClicks = async ({
 	const res = parser.getResult();
 	const device = res.device.type || 'desktop'; // Default to desktop if type is not detected
 
-	const response = await axios.get('http://ip-api.com/json/');
-	const { regionName: city, country } = response.data;
+	try {
+		const response = await axios.get('http://ip-api.com/json/');
+		const { regionName: city, country } = response.data;
 
-	// Record the click
-	await supabase.from('clicks').insert({
-		url_id: url_id,
-		city: city || 'unknown',
-		country: country || 'unknown',
-		device: device,
-	});
+		// Record the click
+		await supabase.from('clicks').insert({
+			url_id: url_id,
+			city: city || 'unknown',
+			country: country || 'unknown',
+			device: device,
+		});
+	} catch (error) {
+		console.error('Error fetching location data:', error);
+		// Record the click with unknown location data
+		await supabase.from('clicks').insert({
+			url_id: url_id,
+			city: 'unknown',
+			country: 'unknown',
+			device: device,
+		});
+	}
 };
