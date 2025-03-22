@@ -59,6 +59,7 @@ export const storeClicks = async ({
 		const response = await fetch('https://ip-api.com/json/');
 		const data = await response.json();
 		const { regionName: city, country } = data;
+		await console.log(data);
 
 		// Record the click
 		await supabase.from('clicks').insert({
