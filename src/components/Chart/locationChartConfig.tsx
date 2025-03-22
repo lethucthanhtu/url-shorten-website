@@ -1,4 +1,4 @@
-import { ChartConfig } from '../ui/chart';
+import { ChartConfig } from '@/components/ui/chart';
 
 export const locationChartConfig = {
 

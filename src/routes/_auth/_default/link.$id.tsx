@@ -38,6 +38,7 @@ import { toPng } from 'html-to-image';
 import CountUp from 'react-countup';
 import { Badge } from '@/components/ui/badge';
 import { ChartConfig } from '@/components/ui/chart';
+import LTPieChart from '@/components/Chart/pieChart';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -127,6 +128,19 @@ function RouteComponent() {
 		}
 	};
 
+	const aggregateDeviceData = (stats: Click[] | undefined) => {
+		if (!stats) return {};
+
+		return stats.reduce(
+			(acc, click) => {
+				const device = click.device || 'Unknown';
+				acc[device] = (acc[device] || 0) + 1;
+				return acc;
+			},
+			{} as Record<string, number>
+		);
+	};
+
 	const aggregateClickData = (stats: Click[] | undefined) => {
 		if (!stats) return [];
 
@@ -170,14 +184,39 @@ function RouteComponent() {
 		});
 	};
 
-	const chartData = filterDataByTimeRange(
+	const chartClicksData = filterDataByTimeRange(
 		aggregateClickData(stats).map((item) => ({
 			date: item.date,
 			clicks: item.numberOfClicks,
 		}))
 	);
 
-	const chartConfig = {
+	const deviceStats = aggregateDeviceData(stats);
+
+	const chartDevicesData = Object.entries(deviceStats).map(
+		([device, count]) => ({
+			name: device,
+			value: count,
+			fill: `hsl(var(--chart-${Math.floor(Math.random() * 5 + 1)}))`,
+		})
+	);
+
+	const chartDevicesConfig = {
+		value: {
+			label: 'Clicks',
+		},
+		...Object.fromEntries(
+			Object.keys(deviceStats).map((device) => [
+				device,
+				{
+					label: device,
+					color: `hsl(var(--chart-${Math.floor(Math.random() * 5 + 1)}))`,
+				},
+			])
+		),
+	} satisfies ChartConfig;
+
+	const chartClicksConfig = {
 		clicks: {
 			label: 'Clicks',
 			color: 'hsl(var(--chart-2))',
@@ -361,27 +400,40 @@ function RouteComponent() {
 								</CardHeader>
 								<CardContent className='w-full'>
 									<CardDescription className='w-full flex flex-col gap-4'>
-										{chartData.length > 0 ? (
-											<LTLineChart
-												chartConfig={chartConfig}
-												chartData={chartData}
-												title='Click Analytics'
-												description='Daily click statistics'
-												footerTitle='Total clicks tracked over time'
-												footerDescription='Showing daily click statistics for your shortened URL'
+										<LTLineChart
+											chartConfig={chartClicksConfig}
+											chartData={chartClicksData}
+											title='Click Analytics'
+											description='Daily click statistics'
+											footerTitle='Total clicks tracked over time'
+											footerDescription='Showing daily click statistics for your shortened URL'
+										/>
+
+										<div className='flex flex-col md:flex-row gap-4 justify-center items-center w-full'>
+											<LTPieChart
+												chartConfig={chartDevicesConfig}
+												chartData={chartDevicesData}
+												className='md:basis-1/2 w-full'
+												title='Device Distribution'
+												description='Click statistics by device type'
+												footerTitle={`Total Devices: ${chartDevicesData.length}`}
+												footerDescription='Distribution of devices accessing your link'
 											/>
-										) : (
-											<div className='flex flex-col items-center justify-center p-8 text-center'>
-												<p className='text-muted-foreground text-lg'>
-													No click data available for this time period
-												</p>
-												<p className='text-sm text-muted-foreground'>
-													Try selecting a different time range or check back
-													later
-												</p>
+											<div className='relative md:basis-1/2 w-full'>
+												<LTPieChart
+													chartConfig={chartDevicesConfig}
+													chartData={[]}
+													className='md:basis-1/2 w-full blur-sm'
+													title='Location Distribution'
+													description='Click statistics by location'
+													footerTitle={`Total Devices: ${chartDevicesData.length}`}
+													footerDescription='Distribution of location accessing your link'
+												/>
+												<Badge className='scale-150 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 capitalize'>
+													coming soon
+												</Badge>
 											</div>
-										)}
-										<div className='flex flex-col md:flex-row gap-4 justify-center items-center'></div>
+										</div>
 									</CardDescription>
 								</CardContent>
 								<CardFooter className=''></CardFooter>

@@ -38,10 +38,10 @@ export default function LTLineChart<TData>({
 	chartConfig,
 	chartData,
 	className,
-	title = 'Click Analytics',
-	description = 'Daily click statistics',
-	footerTitle = 'Total clicks tracked over time',
-	footerDescription = 'Showing daily click statistics for your shortened URL',
+	title,
+	description,
+	footerTitle,
+	footerDescription,
 	showTrending = true,
 }: LineChartProps<TData>) {
 	return (
@@ -51,38 +51,53 @@ export default function LTLineChart<TData>({
 				<CardDescription>{description}</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<ChartContainer
-					config={chartConfig}
-					className='w-full md:max-h-[250px]'
-				>
-					<ResponsiveContainer width='100%' height={250}>
-						<LineChart
-							accessibilityLayer
-							data={chartData}
-							margin={{ left: 12, right: 12 }}
+				{chartData.length > 0 ? (
+					<>
+						<ChartContainer
+							config={chartConfig}
+							className='w-full md:max-h-[250px]'
 						>
-							<CartesianGrid vertical={false} />
-							<XAxis
-								dataKey='date'
-								tickLine={false}
-								axisLine={false}
-								tickMargin={8}
-							/>
-							<YAxis hide />
-							<ChartTooltip
-								cursor={false}
-								content={<ChartTooltipContent hideLabel />}
-							/>
-							<Line
-								dataKey='clicks'
-								type='linear'  // Changed from 'monotone' to 'linear'
-								stroke='hsl(var(--chart-2))'
-								strokeWidth={2}
-								dot={false}
-							/>
-						</LineChart>
-					</ResponsiveContainer>
-				</ChartContainer>
+							<ResponsiveContainer width='100%' height={250}>
+								<LineChart
+									accessibilityLayer
+									data={chartData}
+									margin={{ left: 12, right: 12 }}
+								>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										dataKey='date'
+										tickLine={false}
+										axisLine={false}
+										tickMargin={8}
+									/>
+									<YAxis hide />
+									<ChartTooltip
+										cursor={false}
+										content={<ChartTooltipContent hideLabel />}
+									/>
+									<Line
+										dataKey='clicks'
+										type='linear' // Changed from 'monotone' to 'linear'
+										stroke='hsl(var(--chart-2))'
+										strokeWidth={2}
+										dot={false}
+									/>
+								</LineChart>
+							</ResponsiveContainer>
+						</ChartContainer>
+					</>
+				) : (
+					<>
+						<div className='flex flex-col items-center justify-center p-8 text-center'>
+							<p className='text-muted-foreground text-lg'>
+								No click data available for this time period
+							</p>
+							<p className='text-sm text-muted-foreground'>
+								Try selecting a different time range or check back later
+							</p>
+						</div>
+					</>
+				)}
 			</CardContent>
 			<CardFooter className='flex-col items-start gap-2 text-sm'>
 				<div className='flex gap-2 font-medium leading-none'>
