@@ -142,15 +142,7 @@ export const get_md_URLColumns = (
 				<>
 					{custom_url ? (
 						<>
-							<div
-								onClick={() =>
-									navigator.clipboard.writeText(makeURL(custom_url))
-								}
-								className='flex justify-center cursor-pointer items-center gap-2'
-							>
-								<Badge variant='secondary'>{custom_url}</Badge>
-								<Copy className='size-4' />
-							</div>
+							<ShortenLink url={url} />
 						</>
 					) : (
 						<></>

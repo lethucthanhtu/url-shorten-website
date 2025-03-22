@@ -5,7 +5,7 @@ import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ShortenLink({ url }: { url: Url }) {
-	const shorten_url = url.shorten_url;
+	const shorten_url = url.custom_url || url.shorten_url;
 
 	const [copy, setCopy] = useState(false);
 
