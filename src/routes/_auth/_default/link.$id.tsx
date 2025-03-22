@@ -341,7 +341,7 @@ function RouteComponent() {
 									<Calendar />
 									<Badge variant='outline'>
 										{new Date(url?.created_at || '').toLocaleString('en-GB', {
-											timeZone: 'UTC',
+											timeZone: 'Asia/Ho_Chi_Minh',
 										})}
 									</Badge>
 								</span>
@@ -349,7 +349,7 @@ function RouteComponent() {
 									<Clock />
 									<Badge variant='outline'>
 										{new Date(url?.updated_at || '').toLocaleString('en-GB', {
-											timeZone: 'UTC',
+											timeZone: 'Asia/Ho_Chi_Minh',
 										})}
 									</Badge>
 								</span>

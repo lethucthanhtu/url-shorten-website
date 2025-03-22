@@ -204,7 +204,7 @@ export const getURLColumns = (
 		cell: ({ row }) => {
 			const url = row.original;
 			const created_at = new Date(url.created_at).toLocaleString('en-GB', {
-				timeZone: 'UTC',
+				timeZone: 'Asia/Ho_Chi_Minh',
 			});
 
 			return (
@@ -237,7 +237,7 @@ export const getURLColumns = (
 		cell: ({ row }) => {
 			const url = row.original;
 			const updated_at = new Date(url.updated_at).toLocaleString('en-GB', {
-				timeZone: 'UTC',
+				timeZone: 'Asia/Ho_Chi_Minh',
 			});
 
 			return (
