@@ -292,26 +292,36 @@ export const get_sm_URLColumns = (
 	},
 	{
 		id: 'actions',
-		header: () => {
-			return (
-				<>
-					<div className='flex justify-center'>
-						<span className='text-center capitalize'>actions</span>
-					</div>
-				</>
-			);
-		},
+		// header: () => {
+		// 	return (
+		// 		<>
+		// 			<div className='flex justify-center'>
+		// 				<span className='text-center capitalize'>actions</span>
+		// 			</div>
+		// 		</>
+		// 	);
+		// },
 		enableHiding: false,
 		cell: ({ row }) => {
 			const url = row.original;
 
 			return (
 				<>
-					<Link to='/link/$id' params={{ id: url.shorten_url }}>
-						<Button variant='outline' size='icon' className='capitalize'>
-							<FileSearch2 />
+					<div className='flex gap-2'>
+						<Link to='/link/$id' params={{ id: url.shorten_url }}>
+							<Button variant='outline' size='icon' className='capitalize'>
+								<FileSearch2 />
+							</Button>
+						</Link>
+
+						<Button
+							variant='destructive'
+							onClick={() => fetchURLs()}
+							className='capitalize hidden'
+						>
+							remove
 						</Button>
-					</Link>
+					</div>
 				</>
 			);
 		},
