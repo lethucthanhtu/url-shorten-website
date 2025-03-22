@@ -1,7 +1,7 @@
 import { Database } from '@/database.gen';
 import supabase from '@/lib/supabase';
 import { UAParser } from 'ua-parser-js';
-import { Url } from './apiUrls';
+import { Url } from '@/lib/apiUrls';
 import axios from 'axios';
 
 export type Click = Database['public']['Tables']['clicks']['Row'];
@@ -36,6 +36,16 @@ export async function getClicksForURL(
 	return clicks;
 }
 
+export async function getClicksDataForChart(url_id: Click['url_id']) {
+	const clicks = await getClicksForURL(url_id);
+	return clicks.map((click) => ({
+		date: click.created_at,
+		city: click.city,
+		country: click.country,
+		device: click.device,
+	}));
+}
+
 const parser = new UAParser();
 
 type StoreClicksProps = {
@@ -53,7 +63,7 @@ export const storeClicks = async ({
 	if (!original_url) throw new Error('StoreClick: Original URL required');
 
 	const res = parser.getResult();
-	const device = res.device.type || 'desktop'; // Default to desktop if type is not detected
+	const device = res.device.type || 'others'; // Default to desktop if type is not detected
 
 	try {
 		const response = await axios.get(
@@ -68,7 +78,7 @@ export const storeClicks = async ({
 			country: country || 'unknown',
 			device: device,
 		});
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (error) {
 		// Record the click with unknown location data
 		await supabase.from('clicks').insert({

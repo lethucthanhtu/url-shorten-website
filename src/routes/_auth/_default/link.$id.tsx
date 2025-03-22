@@ -1,7 +1,4 @@
-import { engagementChartConfig } from '@/components/Chart/engagementChartConfig';
 import LTLineChart from '@/components/Chart/lineChart';
-import { locationChartConfig } from '@/components/Chart/locationChartConfig';
-import LTPieChart from '@/components/Chart/pieChart';
 import EditDialog from '@/components/DataTable/urlEditDialog';
 import ShareDialog from '@/components/DataTable/urlShareDialog';
 import NotFound from '@/components/notFound';
@@ -39,6 +36,8 @@ import { useEffect, useState, useRef } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { toPng } from 'html-to-image';
 import CountUp from 'react-countup';
+import { Badge } from '@/components/ui/badge';
+import { ChartConfig } from '@/components/ui/chart';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -128,22 +127,62 @@ function RouteComponent() {
 		}
 	};
 
-	const pieChartData = [
-		{ month: 'January', desktop: 186, mobile: 80 },
-		{ month: 'February', desktop: 305, mobile: 200 },
-		{ month: 'March', desktop: 237, mobile: 120 },
-		{ month: 'April', desktop: 73, mobile: 190 },
-		{ month: 'May', desktop: 209, mobile: 130 },
-		{ month: 'June', desktop: 214, mobile: 140 },
-	];
+	const aggregateClickData = (stats: Click[] | undefined) => {
+		if (!stats) return [];
 
-	const engagementChartData = [
-		{ browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-		{ browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-		{ browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
-		{ browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-		{ browser: 'other', visitors: 90, fill: 'var(--color-other)' },
-	];
+		const clicksByDate = stats.reduce(
+			(acc, click) => {
+				const date = new Date(click.created_at).toLocaleDateString('en-GB');
+
+				const existingEntry = acc.find((entry) => entry.date === date);
+				if (existingEntry) {
+					existingEntry.numberOfClicks++;
+				} else {
+					acc.push({ date, numberOfClicks: 1 });
+				}
+				return acc;
+			},
+			[] as { date: string; numberOfClicks: number }[]
+		);
+
+		return clicksByDate.sort(
+			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+		);
+	};
+
+	const [timeRange, setTimeRange] = useState('7d');
+
+	const filterDataByTimeRange = (data: { date: string; clicks: number }[]) => {
+		const now = new Date();
+		const ranges = {
+			'7d': 7,
+			'90d': 90,
+			'1y': 365,
+			all: Infinity,
+		};
+
+		return data.filter((item) => {
+			const itemDate = new Date(item.date.split('/').reverse().join('-'));
+			const diffDays = Math.ceil(
+				(now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24)
+			);
+			return diffDays <= ranges[timeRange as keyof typeof ranges];
+		});
+	};
+
+	const chartData = filterDataByTimeRange(
+		aggregateClickData(stats).map((item) => ({
+			date: item.date,
+			clicks: item.numberOfClicks,
+		}))
+	);
+
+	const chartConfig = {
+		clicks: {
+			label: 'Clicks',
+			color: 'hsl(var(--chart-2))',
+		},
+	} satisfies ChartConfig;
 
 	return (
 		<>
@@ -224,7 +263,16 @@ function RouteComponent() {
 										<h5 className=''>
 											<a target='_blank' href={url?.original_url} className=''>
 												<Button variant='link' className=''>
-													{url?.original_url}
+													<span className='hidden md:block'>
+														{url?.original_url && url?.original_url.length > 100
+															? `${url?.original_url.slice(0, 100 - 3)}...`
+															: url?.original_url}
+													</span>
+													<span className='md:hidden'>
+														{url?.original_url && url?.original_url.length > 40
+															? `${url?.original_url.slice(0, 40 - 3)}...`
+															: url?.original_url}
+													</span>
 													<ExternalLink className='' />
 												</Button>
 											</a>
@@ -235,9 +283,11 @@ function RouteComponent() {
 							</CardContent>
 							<CardFooter className='flex gap-2 justify-start items-center'>
 								<Calendar />{' '}
-								{new Date(url?.created_at || '').toLocaleString('en-GB', {
-									timeZone: 'UTC',
-								})}
+								<Badge variant='outline'>
+									{new Date(url?.created_at || '').toLocaleString('en-GB', {
+										timeZone: 'UTC',
+									})}
+								</Badge>
 							</CardFooter>
 						</Card>
 						<div className='w-full flex flex-col md:flex-row md:justify-between items-start gap-4'>
@@ -278,26 +328,60 @@ function RouteComponent() {
 											className='capitalize text-4xl'
 										/>
 									</CardTitle>
+									<div className='flex gap-2 !mt-4 justify-end'>
+										<Button
+											variant={timeRange === '7d' ? 'default' : 'outline'}
+											onClick={() => setTimeRange('7d')}
+											size='sm'
+										>
+											7 days
+										</Button>
+										<Button
+											variant={timeRange === '90d' ? 'default' : 'outline'}
+											onClick={() => setTimeRange('90d')}
+											size='sm'
+										>
+											90 days
+										</Button>
+										<Button
+											variant={timeRange === '1y' ? 'default' : 'outline'}
+											onClick={() => setTimeRange('1y')}
+											size='sm'
+										>
+											1 year
+										</Button>
+										<Button
+											variant={timeRange === 'all' ? 'default' : 'outline'}
+											onClick={() => setTimeRange('all')}
+											size='sm'
+										>
+											All time
+										</Button>
+									</div>
 								</CardHeader>
 								<CardContent className='w-full'>
 									<CardDescription className='w-full flex flex-col gap-4'>
-										<LTLineChart
-											chartConfig={engagementChartConfig}
-											chartData={engagementChartData}
-											className=''
-										/>
-										<div className='flex flex-col md:flex-row gap-4 justify-center items-center'>
-											<LTPieChart
-												chartConfig={locationChartConfig}
-												chartData={pieChartData}
-												className='md:basis-1/2 w-full'
+										{chartData.length > 0 ? (
+											<LTLineChart
+												chartConfig={chartConfig}
+												chartData={chartData}
+												title='Click Analytics'
+												description='Daily click statistics'
+												footerTitle='Total clicks tracked over time'
+												footerDescription='Showing daily click statistics for your shortened URL'
 											/>
-											<LTPieChart
-												chartConfig={locationChartConfig}
-												chartData={pieChartData}
-												className='md:basis-1/2 w-full'
-											/>
-										</div>
+										) : (
+											<div className='flex flex-col items-center justify-center p-8 text-center'>
+												<p className='text-muted-foreground text-lg'>
+													No click data available for this time period
+												</p>
+												<p className='text-sm text-muted-foreground'>
+													Try selecting a different time range or check back
+													later
+												</p>
+											</div>
+										)}
+										<div className='flex flex-col md:flex-row gap-4 justify-center items-center'></div>
 									</CardDescription>
 								</CardContent>
 								<CardFooter className=''></CardFooter>
