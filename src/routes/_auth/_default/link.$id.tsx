@@ -82,22 +82,24 @@ function RouteComponent() {
 	} = useFetch<void>(() => deleteUrl(url?.id || null));
 
 	useEffect(() => {
-		fnGetURL();
+		fnGetURL().then((res) => {
+			if (!res || res.user_id !== user?.id)
+				navigate({ to: '/', replace: true });
+			else if (res.custom_url === id)
+				navigate({
+					to: '/link/$id',
+					params: { id: res.shorten_url },
+					replace: true,
+				});
+			// else fnGetStats();
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [id, navigate, user?.id]);
 
 	useEffect(() => {
-		if (url && user && url.user_id !== user.id) navigate({ to: '/' });
-		if (url && url.custom_url === id)
-			navigate({
-				to: '/link/$id',
-				params: { id: url.shorten_url },
-				replace: true,
-			});
-		else if (url && url.id) fnGetStats();
-
+		if (url && url.id) fnGetStats();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [url, user, navigate]);
+	}, [url]);
 
 	const URL = makeURL(url?.custom_url || url?.shorten_url || '');
 	const DISPLAY_URL = URL.replace('https://', '')
