@@ -39,7 +39,7 @@ function RouteComponent() {
 	useEffect(() => {
 		if (!loading && data && !error) {
 			fnStats()
-				.finally(() => window.location.assign(data.original_url));
+				// .finally(() => window.location.assign(data.original_url));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, data, error]);
