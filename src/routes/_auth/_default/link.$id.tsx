@@ -17,9 +17,10 @@ import { useTheme } from '@/contexts/ThemeContext';
 import useFetch from '@/hooks/useFetch';
 import { Click, getClicksForURL } from '@/lib/apiClicks';
 import { deleteUrl, getLongUrl, Url } from '@/lib/apiUrls';
-import { makeURL } from '@/lib/utils';
+import { cn, makeURL } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
+	Activity,
 	ArrowLeft,
 	Calendar,
 	Check,
@@ -246,8 +247,20 @@ function RouteComponent() {
 						<Card className='w-full'>
 							<CardHeader className='w-full'>
 								<div className='flex flex-col md:flex-row gap-4 justify-between items-center'>
-									<CardTitle className='capitalize text-3xl'>
-										{url?.title || 'untitled'}
+									<CardTitle className='capitalize flex gap-4 justify-center'>
+										<span className='text-3xl'>{url?.title || 'untitled'}</span>
+										<Badge
+											variant='default'
+											className={cn(
+												'ml-2 my-2 flex items-center justify-center gap-2 animate-pulse',
+												url?.active ? 'bg-green-500' : 'bg-red-500 '
+											)}
+										>
+											<Activity className='size-4' />
+											<span className='stroke-current stroke-2'>
+												{url?.active ? 'active' : 'inactive'}
+											</span>
+										</Badge>
 									</CardTitle>
 									<div className='flex gap-2 justify-center items-center'>
 										<Button

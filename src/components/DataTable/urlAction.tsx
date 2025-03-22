@@ -1,4 +1,4 @@
-import { makeURL } from '@/lib/utils';
+import { cn, makeURL } from '@/lib/utils';
 import {
 	MoreHorizontal,
 	FileChartLine,
@@ -18,7 +18,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Link } from '@tanstack/react-router';
-import { deleteUrl, Url } from '@/lib/apiUrls';
+import { deleteUrl, updateActive, Url } from '@/lib/apiUrls';
 import useFetch from '@/hooks/useFetch';
 import { useState } from 'react';
 import QRDialog from '@/components/DataTable/urlQrDialog';
@@ -37,6 +37,12 @@ export default function UrlAction({ url, fetchURLs }: UrlActionProps) {
 		// error: deleteError,
 		fn: fnDelete,
 	} = useFetch<void>(() => deleteUrl(url.id));
+
+	const {
+		// loading,
+		// error,
+		fn: fnUpdateActive,
+	} = useFetch<Url>(() => updateActive({ id: url.id, active: !url.active }));
 
 	return (
 		<>
@@ -76,8 +82,14 @@ export default function UrlAction({ url, fetchURLs }: UrlActionProps) {
 						Show QR code
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem className='text-red-500'>
-						<Power /> De-active URL
+					<DropdownMenuItem
+						onClick={() =>
+							fnUpdateActive(url.id, !url.active).then(() => fetchURLs())
+						}
+						className={cn('', url.active ? 'text-red-500' : 'text-green-500')}
+					>
+						<Power />
+						{url.active ? <>De-Active URL</> : <>Active URL</>}
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={() => fnDelete(url.id).then(() => fetchURLs())}

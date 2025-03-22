@@ -71,6 +71,7 @@ export type Database = {
       }
       urls: {
         Row: {
+          active: boolean
           created_at: string
           custom_url: string | null
           id: number
@@ -78,9 +79,10 @@ export type Database = {
           qr: string | null
           shorten_url: string
           title: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
+          active?: boolean
           created_at?: string
           custom_url?: string | null
           id?: number
@@ -88,9 +90,10 @@ export type Database = {
           qr?: string | null
           shorten_url: string
           title?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
+          active?: boolean
           created_at?: string
           custom_url?: string | null
           id?: number
@@ -98,7 +101,7 @@ export type Database = {
           qr?: string | null
           shorten_url?: string
           title?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }

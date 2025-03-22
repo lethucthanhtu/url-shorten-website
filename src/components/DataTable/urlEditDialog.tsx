@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown, LoaderCircle } from 'lucide-react';
 import useFetch from '@/hooks/useFetch';
+import { cn } from '@/lib/utils';
 
 type EditDialogProps = {
 	isOpen: boolean;
@@ -39,8 +40,9 @@ export default function EditDialog({
 }: EditDialogProps) {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<Error | null>(null);
+	const [active, setActive] = useState(url.active ? 'active' : 'inactive');
 
-	type FormData = {} & Pick<Url, 'title' | 'custom_url'>;
+	type FormData = {} & Pick<Url, 'title' | 'custom_url' | 'active'>;
 
 	const [formData, setFormData] = useState<FormData>({ ...url });
 
@@ -141,18 +143,37 @@ export default function EditDialog({
 					<DialogFooter className=''>
 						<div className='flex justify-between w-full'>
 							<DropdownMenu>
-								<DropdownMenuTrigger>
-									<Button variant='outline'>
-										active
+								<DropdownMenuTrigger className=''>
+									<Button
+										variant='outline'
+										className={cn(
+											'capitalize min-w-28',
+											active === 'active' ? `text-green-500` : `text-red-500`
+										)}
+									>
+										{active}
 										<ChevronDown />
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align='end'>
-									<DropdownMenuRadioGroup value='active'>
-										<DropdownMenuRadioItem value='active'>
+									<DropdownMenuRadioGroup
+										value={active}
+										onValueChange={(value) => {
+											setActive(value);
+											setFormData({ ...formData, active: value === 'active' });
+										}}
+										className=''
+									>
+										<DropdownMenuRadioItem
+											value='active'
+											className='text-green-500 capitalize'
+										>
 											active
 										</DropdownMenuRadioItem>
-										<DropdownMenuRadioItem value='inactive'>
+										<DropdownMenuRadioItem
+											value='inactive'
+											className='text-red-500 capitalize'
+										>
 											inactive
 										</DropdownMenuRadioItem>
 									</DropdownMenuRadioGroup>

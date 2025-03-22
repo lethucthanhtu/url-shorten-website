@@ -42,6 +42,22 @@ export async function getLongUrl(
 	const { data, error } = await supabase
 		.from('urls')
 		.select('*')
+		// .eq('active', true)
+		.or(`shorten_url.eq.${id},custom_url.eq.${id}`)
+		.single();
+
+	if (error) throw error;
+
+	return data;
+}
+
+export async function getRedirectUrl(
+	id: Url['shorten_url'] | Url['custom_url']
+): Promise<Url> {
+	const { data, error } = await supabase
+		.from('urls')
+		.select('*')
+		.eq('active', true)
 		.or(`shorten_url.eq.${id},custom_url.eq.${id}`)
 		.single();
 
@@ -106,12 +122,13 @@ export async function deleteUrl(id: Url['id'] | null): Promise<void> {
 	// return data;
 }
 
-type UpdateUrlProps = {} & Pick<Url, 'title' | 'custom_url' | 'id'>;
+type UpdateUrlProps = {} & Pick<Url, 'title' | 'custom_url' | 'active' | 'id'>;
 
 export async function updateUrl({
 	title,
 	custom_url,
 	id,
+	active = true,
 }: UpdateUrlProps): Promise<Url> {
 	if (!id) throw new Error('URL ID is required');
 	console.log(id);
@@ -121,7 +138,25 @@ export async function updateUrl({
 		.update({
 			title,
 			custom_url,
+			active,
 		})
+		.eq('id', id)
+		.select()
+		.single();
+
+	if (error) throw error;
+
+	return data;
+}
+
+type UpdateActiveProps = {} & Pick<Url, 'id' | 'active'>;
+
+export async function updateActive({ id, active }: UpdateActiveProps) {
+	if (!id) throw new Error('URL ID is required');
+
+	const { data, error } = await supabase
+		.from('urls')
+		.update({ active })
 		.eq('id', id)
 		.select()
 		.single();

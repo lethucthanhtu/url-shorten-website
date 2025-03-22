@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowUpDown, Copy, ExternalLink, FileSearch2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { makeURL } from '@/lib/utils';
+import { cn, makeURL } from '@/lib/utils';
 import { Url } from '@/lib/apiUrls';
 import UrlAction from '@/components/DataTable/urlAction';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +50,39 @@ export const get_md_URLColumns = (
 				</Button>
 			</>
 		),
+	},
+	{
+		accessorKey: 'active',
+		header: ({ column }) => (
+			<>
+				<Button
+					variant='ghost'
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+					className='capitalize'
+				>
+					active
+					<ArrowUpDown />
+				</Button>
+			</>
+		),
+		cell: ({ row }) => {
+			const url = row.original;
+			return (
+				<>
+					<Badge
+						variant='outline'
+						className={cn(
+							'animate-pulse w-16 text-center',
+							url.active ? 'bg-green-500' : 'bg-red-500'
+						)}
+					>
+						<span className='text-center w-full'>
+							{url.active ? 'active' : 'inactive'}
+						</span>
+					</Badge>
+				</>
+			);
+		},
 	},
 	{
 		accessorKey: 'original_url',
