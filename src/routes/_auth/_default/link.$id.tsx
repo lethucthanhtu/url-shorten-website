@@ -38,6 +38,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState, useRef } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { toPng } from 'html-to-image';
+import CountUp from 'react-countup';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -66,7 +67,7 @@ function RouteComponent() {
 	const {
 		loading: loadingStats,
 		// error: errorStats,
-		// data: stats,
+		data: stats,
 		fn: fnGetStats,
 	} = useFetch<Click[]>(() => getClicksForURL(url?.id || null));
 
@@ -268,13 +269,17 @@ function RouteComponent() {
 									</Button>
 								</CardFooter>
 							</Card>
-							<Card className='md:basis-2/3 h-full'>
+							<Card className='md:basis-2/3 w-full h-full'>
 								<CardHeader className=''>
-									<CardTitle className='capitalize text-2xl'>
-										engagements
+									<CardTitle className='flex justify-between items-start'>
+										<span className='capitalize text-2xl'>engagements</span>
+										<CountUp
+											end={stats?.length || 0}
+											className='capitalize text-4xl'
+										/>
 									</CardTitle>
 								</CardHeader>
-								<CardContent className=''>
+								<CardContent className='w-full'>
 									<CardDescription className='w-full flex flex-col gap-4'>
 										<LTLineChart
 											chartConfig={engagementChartConfig}
@@ -285,12 +290,12 @@ function RouteComponent() {
 											<LTPieChart
 												chartConfig={locationChartConfig}
 												chartData={pieChartData}
-												className='md:basis-1/2'
+												className='md:basis-1/2 w-full'
 											/>
 											<LTPieChart
 												chartConfig={locationChartConfig}
 												chartData={pieChartData}
-												className='md:basis-1/2'
+												className='md:basis-1/2 w-full'
 											/>
 										</div>
 									</CardDescription>
