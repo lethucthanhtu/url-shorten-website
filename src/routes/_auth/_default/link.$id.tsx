@@ -29,6 +29,7 @@ import {
 	Edit,
 	ExternalLink,
 	Globe,
+	MousePointerClick,
 	Share,
 	Trash,
 } from 'lucide-react';
@@ -57,6 +58,7 @@ function RouteComponent() {
 	const [isShareCodeDialogOpen, setIsShareCodeDialogOpen] =
 		useState<boolean>(false);
 	const qrRef = useRef<HTMLDivElement>(null);
+	const [qrShow, setQrShow] = useState<boolean>(true);
 
 	const {
 		loading: loadingURL,
@@ -349,16 +351,28 @@ function RouteComponent() {
 										QR code
 									</CardTitle>
 								</CardHeader>
-								<CardContent className=''>
+								<CardContent onClick={() => setQrShow(!qrShow)} className=''>
 									<CardDescription
 										ref={qrRef}
-										className='aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition hover:scale-100'
+										className={cn(
+											'relative aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition ',
+											qrShow ? 'blur-xl' : 'blur-none hover:scale-100'
+										)}
 									>
 										<QRCodeSVG
 											value={URL}
 											className='size-full aspect-square ring-2 ring-black dark:ring-white rounded-xl'
 										/>
 									</CardDescription>
+									<Badge
+										variant={'default'}
+										className={cn(
+											'flex gap-2 absolute scale-150 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50',
+											qrShow ? '' : 'hidden'
+										)}
+									>
+										<MousePointerClick className='' /> Click to reveal
+									</Badge>
 								</CardContent>
 								<CardFooter className='w-full'>
 									<Button
