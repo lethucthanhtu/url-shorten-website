@@ -72,13 +72,11 @@ export const getURLColumns = (
 					<Badge
 						variant='outline'
 						className={cn(
-							'animate-pulse w-16 text-center',
+							'animate-pulse w-16 text-center flex justify-center items-center',
 							url.active ? 'bg-green-500' : 'bg-red-500'
 						)}
 					>
-						<span className='text-center w-full'>
-							{url.active ? 'active' : 'inactive'}
-						</span>
+						{url.active ? 'active' : 'inactive'}
 					</Badge>
 				</>
 			);

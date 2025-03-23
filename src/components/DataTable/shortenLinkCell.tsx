@@ -20,7 +20,12 @@ export default function ShortenLink({ url }: { url: string }) {
 				onClick={handleCopy}
 				className='flex justify-center cursor-pointer items-center gap-2'
 			>
-				<Badge variant='secondary'>{url}</Badge>
+				<Badge
+					variant='secondary'
+					className='min-w-20 text-center flex justify-center'
+				>
+					{url}
+				</Badge>
 				{copy ? <Check className='size-4' /> : <Copy className='size-4' />}
 			</div>
 		</>
