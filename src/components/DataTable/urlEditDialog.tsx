@@ -93,6 +93,15 @@ export default function EditDialog({
 		}
 	};
 
+	// check for changes
+	const hasChanges = () => {
+		return (
+			formData.title !== url.title ||
+			formData.custom_url !== url.custom_url ||
+			formData.active !== url.active
+		);
+	};
+
 	return (
 		<>
 			<Dialog open={isOpen} onOpenChange={onClose}>
@@ -187,15 +196,16 @@ export default function EditDialog({
 									</DropdownMenuRadioGroup>
 								</DropdownMenuContent>
 							</DropdownMenu>
+
 							<Button
-								disabled={loading}
+								disabled={loading || !hasChanges()}
 								onClick={handleUpdateUrl}
-								className='capitalize min-w-24'
+								className={cn('capitalize min-w-24', '')}
 							>
 								{loading ? (
 									<LoaderCircle className='animate-spin w-max' />
 								) : (
-									'update'
+									<>update</>
 								)}
 							</Button>
 						</div>
