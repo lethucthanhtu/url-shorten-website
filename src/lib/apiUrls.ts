@@ -135,25 +135,26 @@ export async function updateUrl({
 }: UpdateUrlProps): Promise<Url> {
 	if (!id) throw new Error('URL ID is required');
 
-	const now = new Date().toISOString().replace('T', ' ').replace('Z', '+00');
-
 	// check if custom_url === any existing shorten_url or custom_url
-	const { data: dataExistUrl } = await supabase
-		.from('urls')
-		.select('*')
-		.neq('id', id)
-		.or(`shorten_url.eq.${custom_url},custom_url.eq.${custom_url}`)
-		.single();
+	if (custom_url !== '') {
+		const { data: dataExistUrl } = await supabase
+			.from('urls')
+			.select('*')
+			.neq('id', id)
+			.or(`shorten_url.eq.${custom_url},custom_url.eq.${custom_url}`)
+			.single();
 
-	if (dataExistUrl) throw new Error('URL already exists');
+		if (dataExistUrl) throw new Error('URL already exists');
+	} else custom_url = null;
 
+	// update url
 	const { data, error } = await supabase
 		.from('urls')
 		.update({
 			title,
 			custom_url,
 			active,
-			updated_at: now,
+			updated_at: new Date().toISOString().replace('T', ' ').replace('Z', '+00'),
 		})
 		.eq('id', id)
 		.select()
