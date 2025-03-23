@@ -16,7 +16,7 @@ import { useSession } from '@/contexts/SessionContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import useFetch from '@/hooks/useFetch';
 import { Click, getClicksForURL } from '@/lib/apiClicks';
-import { deleteUrl, getLongUrl, Url } from '@/lib/apiUrls';
+import { getLongUrl, Url } from '@/lib/apiUrls';
 import { cn, makeURL } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -42,6 +42,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChartConfig } from '@/components/ui/chart';
 import LTPieChart from '@/components/Chart/pieChart';
 import ActiveBadge from '@/components/activeBadge';
+import DeleteDialog from '@/components/DataTable/urlDeleteDialog';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -58,6 +59,7 @@ function RouteComponent() {
 	const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState<boolean>(false);
 	const [isShareCodeDialogOpen, setIsShareCodeDialogOpen] =
 		useState<boolean>(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
 	const qrRef = useRef<HTMLDivElement>(null);
 	const [qrShow, setQrShow] = useState<boolean>(true);
 
@@ -74,12 +76,6 @@ function RouteComponent() {
 		data: stats,
 		fn: fnGetStats,
 	} = useFetch<Click[]>(() => getClicksForURL(url?.id || null));
-
-	const {
-		loading: loadingDelete,
-		// error: deleteError,
-		fn: fnDelete,
-	} = useFetch<void>(() => deleteUrl(url?.id || null));
 
 	useEffect(() => {
 		fnGetURL().then((res) => {
@@ -113,10 +109,6 @@ function RouteComponent() {
 		setTimeout(() => {
 			setCopy(false);
 		}, 1500);
-	};
-
-	const handleDelete = () => {
-		fnDelete(url?.id).then(() => navigate({ to: '/dashboard', replace: true }));
 	};
 
 	const handleDownload = () => {
@@ -232,7 +224,7 @@ function RouteComponent() {
 	return (
 		<>
 			<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
-				{loadingURL || loadingStats || loadingDelete ? (
+				{loadingURL || loadingStats ? (
 					<>
 						<BeatLoader
 							color={currentTheme === 'dark' ? 'white' : 'black'}
@@ -287,7 +279,7 @@ function RouteComponent() {
 										</Button>
 										<Button
 											variant='destructive'
-											onClick={handleDelete}
+											onClick={() => setIsDeleteDialogOpen(true)}
 											className='capitalize'
 										>
 											<Trash className='' />
@@ -489,6 +481,12 @@ function RouteComponent() {
 							url={url}
 							isOpen={isShareCodeDialogOpen}
 							onClose={() => setIsShareCodeDialogOpen(false)}
+						/>
+						<DeleteDialog
+							url={url}
+							isOpen={isDeleteDialogOpen}
+							onClose={() => setIsDeleteDialogOpen(false)}
+							fetchURLs={fnGetURL}
 						/>
 					</>
 				)}

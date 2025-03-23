@@ -18,11 +18,12 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Link } from '@tanstack/react-router';
-import { deleteUrl, updateActive, Url } from '@/lib/apiUrls';
+import { updateActive, Url } from '@/lib/apiUrls';
 import useFetch from '@/hooks/useFetch';
 import { useState } from 'react';
 import QRDialog from '@/components/DataTable/urlQrDialog';
 import EditDialog from '@/components/DataTable/urlEditDialog';
+import DeleteDialog from './urlDeleteDialog';
 
 type UrlActionProps = {
 	url: Url;
@@ -37,11 +38,7 @@ export default function UrlAction({
 }: UrlActionProps) {
 	const [isQrCodeDialogOpen, setIsQrCodeDialogOpen] = useState<boolean>(false);
 	const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState<boolean>(false);
-	const {
-		// loading: deleteLoading,
-		// error: deleteError,
-		fn: fnDelete,
-	} = useFetch<void>(() => deleteUrl(url.id));
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
 
 	const {
 		// loading,
@@ -98,7 +95,7 @@ export default function UrlAction({
 							{url.active ? <>De-Active URL</> : <>Active URL</>}
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							onClick={() => fnDelete(url.id).then(() => fetchURLs())}
+							onClick={() => setIsDeleteDialogOpen(true)}
 							className='text-red-500'
 						>
 							<Trash /> Remove
@@ -114,6 +111,12 @@ export default function UrlAction({
 					url={url}
 					isOpen={isUpdateDialogOpen}
 					onClose={() => setIsUpdateDialogOpen(false)}
+					fetchURLs={fetchURLs}
+				/>
+				<DeleteDialog
+					url={url}
+					isOpen={isDeleteDialogOpen}
+					onClose={() => setIsDeleteDialogOpen(false)}
 					fetchURLs={fetchURLs}
 				/>
 			</div>
