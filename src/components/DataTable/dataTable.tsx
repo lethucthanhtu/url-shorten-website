@@ -79,7 +79,7 @@ export default function DataTable<TData, TValue>({
 	});
 
 	const [filter, setFilter] = useState<string>(
-		table.getAllColumns().filter((column) => column.getCanHide())[0].id
+		table.getAllColumns().filter((column) => column.getCanFilter())[0].id
 	);
 
 	return (
@@ -108,7 +108,7 @@ export default function DataTable<TData, TValue>({
 						<DropdownMenuContent align='end'>
 							{table
 								.getAllColumns()
-								.filter((column) => column.getCanHide())
+								.filter((column) => column.getCanFilter())
 								.map((column) => (
 									<>
 										<DropdownMenuRadioGroup

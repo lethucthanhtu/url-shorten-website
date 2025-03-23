@@ -9,9 +9,7 @@ import { Link } from '@tanstack/react-router';
 import ShortenLink from '@/components/DataTable/shortenLinkCell';
 import ActiveBadge from '@/components/activeBadge';
 
-export const getURLColumns = (
-	fetchURLs: () => Promise<unknown>
-): ColumnDef<Url>[] => [
+export const getURLColumns = (fetchURLs: () => Promise<unknown>): ColumnDef<Url>[] => [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -53,6 +51,7 @@ export const getURLColumns = (
 	},
 	{
 		accessorKey: 'active',
+		enableColumnFilter: false,
 		header: ({ column }) => (
 			<>
 				<Button
@@ -177,6 +176,7 @@ export const getURLColumns = (
 	{
 		id: 'created_at',
 		accessorKey: 'created_at',
+		enableColumnFilter: false,
 		header: ({ column }) => (
 			<>
 				<div className=''>
@@ -209,6 +209,7 @@ export const getURLColumns = (
 	{
 		id: 'updated_at',
 		accessorKey: 'updated_at',
+		enableColumnFilter: false,
 		enableHiding: true,
 		header: ({ column }) => (
 			<>
