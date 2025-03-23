@@ -199,7 +199,7 @@ export const getURLColumns = (
 
 			return (
 				<>
-					<Badge variant='outline' className=''>
+					<Badge variant='outline' className='font-mono'>
 						{created_at}
 					</Badge>
 				</>
@@ -232,7 +232,7 @@ export const getURLColumns = (
 
 			return (
 				<>
-					<Badge variant='outline' className=''>
+					<Badge variant='outline' className='font-mono'>
 						{updated_at}
 					</Badge>
 				</>
