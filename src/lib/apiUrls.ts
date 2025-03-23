@@ -137,15 +137,15 @@ export async function updateUrl({
 
 	const now = new Date().toISOString().replace('T', ' ').replace('Z', '+00');
 
-	const { data: dataDuplicateShortenURL, error: errorDuplicateShortenURL } =
-		await supabase
-			.from('urls')
-			.select('*')
-			.eq('shorten_url', custom_url || '')
-			.single();
+	// check if custom_url === any existing shorten_url or custom_url
+	const { data: dataExistUrl } = await supabase
+		.from('urls')
+		.select('*')
+		.neq('id', id)
+		.or(`shorten_url.eq.${custom_url},custom_url.eq.${custom_url}`)
+		.single();
 
-	if (dataDuplicateShortenURL || errorDuplicateShortenURL)
-		throw new Error('Custom URL is already taken');
+	if (dataExistUrl) throw new Error('URL already exists');
 
 	const { data, error } = await supabase
 		.from('urls')
