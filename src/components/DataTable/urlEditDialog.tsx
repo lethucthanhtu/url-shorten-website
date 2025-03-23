@@ -64,7 +64,7 @@ export default function EditDialog({
 	});
 
 	const handleChanges = (e: ChangeEvent<HTMLInputElement>) => {
-		setFormData({ ...formData, [e.target.id]: e.target.value });
+		setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
 	};
 
 	const {
@@ -96,8 +96,8 @@ export default function EditDialog({
 	// check for changes
 	const hasChanges = () => {
 		return (
-			formData.title !== url.title ||
-			formData.custom_url !== url.custom_url ||
+			formData.title?.trim() !== url.title ||
+			formData.custom_url?.trim() !== url.custom_url ||
 			formData.active !== url.active
 		);
 	};
