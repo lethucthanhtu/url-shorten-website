@@ -137,6 +137,16 @@ export async function updateUrl({
 
 	const now = new Date().toISOString().replace('T', ' ').replace('Z', '+00');
 
+	const { data: dataDuplicateShortenURL, error: errorDuplicateShortenURL } =
+		await supabase
+			.from('urls')
+			.select('*')
+			.eq('shorten_url', custom_url || '')
+			.single();
+
+	if (dataDuplicateShortenURL) throw new Error('URL is already taken');
+	if (errorDuplicateShortenURL) throw errorDuplicateShortenURL;
+
 	const { data, error } = await supabase
 		.from('urls')
 		.update({
