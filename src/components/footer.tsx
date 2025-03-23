@@ -13,7 +13,7 @@ export default function Footer({ ...props }: FooterProps) {
 			<footer
 				{...props}
 				className={cn(
-					'flex flex-col gap-2 items-center justify-between w-full py-4 px-8 mt-4 shadow-[0px_-12px_6px_-2px_rgba(0,0,0,0.05)] dark:border border-t-gray-800 rounded-lg',
+					'flex flex-col gap-2 items-center justify-between w-full p-4 md:px-12 mt-4 shadow-[0px_-12px_6px_-2px_rgba(0,0,0,0.05)] dark:border border-t-gray-800 rounded-lg',
 					props.className
 				)}
 			>

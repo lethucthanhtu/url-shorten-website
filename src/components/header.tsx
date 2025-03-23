@@ -37,13 +37,13 @@ export default function Header({ ...props }: HeaderProps) {
 		<header
 			{...props}
 			className={cn(
-				'p-4 bg-cover bg-center rounded-lg flex justify-between items-center w-full sticky top-0 bg-background border-b z-50',
+				'p-4 md:px-12 bg-cover bg-center rounded-lg flex justify-between items-center w-full sticky top-0 bg-background border-b z-50',
 				props.className
 			)}
 		>
 			<Logo className='size-10' />
 
-			<NavigationMenu className=''>
+			<NavigationMenu className='hidden md:block'>
 				<NavigationMenuList className=''>
 					<NavigationMenuLink asChild className=''>
 						<Link to='/' className=''>
