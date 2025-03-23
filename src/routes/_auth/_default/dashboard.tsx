@@ -15,9 +15,10 @@ import CreateLinkButton from '@/components/createLinkButton';
 import BeatLoader from 'react-spinners/BeatLoader';
 import DataTable from '@/components/DataTable/dataTable';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Link } from 'lucide-react';
+import { Asterisk, Link } from 'lucide-react';
 import { getURLColumns } from '@/components/DataTable/urlColumns';
 import CountUp from 'react-countup';
+import { Badge } from '@/components/ui/badge';
 
 export const Route = createFileRoute('/_auth/_default/dashboard')({
 	component: RouteComponent,
@@ -146,7 +147,12 @@ function RouteComponent() {
 										</>
 									)}
 								</CardContent>
-								<CardFooter className=''></CardFooter>
+								<CardFooter className=''>
+									<Badge variant={'secondary'} className='hidden md:flex'>
+										<Asterisk className='text-red-500' />
+										Note: Hold Ctrl to sort by multiple columns.
+									</Badge>
+								</CardFooter>
 							</Card>
 						</div>
 					</div>
