@@ -61,7 +61,7 @@ export async function getRedirectUrl(
 		.or(`shorten_url.eq.${id},custom_url.eq.${id}`)
 		.single();
 
-	if (error) throw error;
+	if (error) throw new Error('Hmmmm...how did you get here?');
 
 	return data;
 }
