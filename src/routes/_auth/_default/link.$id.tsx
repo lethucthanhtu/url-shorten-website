@@ -254,7 +254,11 @@ function RouteComponent() {
 								<div className='flex flex-col md:flex-row gap-4 justify-between items-center'>
 									<CardTitle className='capitalize flex gap-4 justify-center'>
 										<span className='text-3xl'>{url?.title || 'untitled'}</span>
-										<ActiveBadge active={url?.active} className='my-2' iconShown/>
+										<ActiveBadge
+											active={url?.active}
+											className='my-2'
+											iconShown
+										/>
 									</CardTitle>
 									<div className='flex gap-2 justify-center items-center'>
 										<Button
@@ -372,7 +376,7 @@ function RouteComponent() {
 									<Badge
 										variant={'default'}
 										className={cn(
-											'flex gap-2 absolute scale-150 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50',
+											'flex gap-2 absolute scale-150 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30',
 											qrShow ? '' : 'hidden'
 										)}
 									>
@@ -396,7 +400,7 @@ function RouteComponent() {
 										<span className='capitalize text-2xl'>engagements</span>
 										<CountUp
 											end={stats?.length || 0}
-											className='capitalize text-4xl'
+											className='capitalize text-4xl font-mono'
 										/>
 									</CardTitle>
 									<div className='flex gap-2 !mt-4 justify-end'>

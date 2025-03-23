@@ -69,22 +69,28 @@ function RouteComponent() {
 			) : (
 				<>
 					<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
-						<div className='flex flex-col md:flex-row justify-center items-center gap-4 w-full'>
-							<Card className='w-full md:basis-1/2'>
+						<div className='flex justify-center items-center gap-4 w-full'>
+							<Card className='w-full basis-1/2'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize'>links created</CardTitle>
 								</CardHeader>
 								<CardContent className='flex justify-end items-center'>
-									<CountUp end={urls?.length || 0} className='text-3xl' />
+									<CountUp
+										end={urls?.length || 0}
+										className='text-3xl font-mono'
+									/>
 								</CardContent>
 								{/* <CardFooter className=''></CardFooter> */}
 							</Card>
-							<Card className='w-full md:basis-1/2'>
+							<Card className='w-full basis-1/2'>
 								<CardHeader className=''>
 									<CardTitle className='capitalize'>total clicks</CardTitle>
 								</CardHeader>
 								<CardContent className='flex justify-end items-center'>
-									<CountUp end={clicks?.length || 0} className='text-3xl' />
+									<CountUp
+										end={clicks?.length || 0}
+										className='text-3xl font-mono'
+									/>
 								</CardContent>
 								{/* <CardFooter className=''></CardFooter> */}
 							</Card>

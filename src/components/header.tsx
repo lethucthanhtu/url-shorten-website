@@ -24,7 +24,7 @@ import {
 	Settings,
 	User,
 } from 'lucide-react';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, useEffect, useState } from 'react';
 import { useSession } from '@/contexts/SessionContext';
 import LoginGoogleButton from '@/components/googleButton';
 import {
@@ -42,6 +42,19 @@ type HeaderProps = {} & Omit<HTMLAttributes<HTMLElement>, ''>;
 export default function Header({ ...props }: HeaderProps) {
 	const { session, signOut, user } = useSession();
 	const navigate = useNavigate();
+	const [isVisible, setIsVisible] = useState(true);
+	const [lastScrollY, setLastScrollY] = useState(0);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			const currentScrollY = window.scrollY;
+			setIsVisible(currentScrollY < lastScrollY || currentScrollY < 10);
+			setLastScrollY(currentScrollY);
+		};
+
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		return () => window.removeEventListener('scroll', handleScroll);
+	}, [lastScrollY]);
 
 	const handleSignOut = () => {
 		signOut();
@@ -52,7 +65,8 @@ export default function Header({ ...props }: HeaderProps) {
 		<header
 			{...props}
 			className={cn(
-				'p-4 md:px-12 bg-cover bg-center rounded-lg flex justify-between items-center w-full sticky top-0 bg-background border-b z-50',
+				'p-4 md:px-12 bg-cover bg-center rounded-lg flex justify-between items-center w-full sticky top-0 bg-background border-b z-50 transition-transform duration-300',
+				!isVisible && 'md:transform md:translate-y-0 -translate-y-full',
 				props.className
 			)}
 		>
