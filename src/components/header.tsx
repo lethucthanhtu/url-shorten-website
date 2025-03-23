@@ -70,8 +70,6 @@ export default function Header({ ...props }: HeaderProps) {
 				props.className
 			)}
 		>
-			<Logo className='size-10 hidden md:block' />
-
 			<NavigationMenu className='hidden md:block'>
 				<NavigationMenuList className=''>
 					<NavigationMenuLink asChild className=''>
@@ -163,6 +161,8 @@ export default function Header({ ...props }: HeaderProps) {
 					</div>
 				</DrawerContent>
 			</Drawer>
+
+			<Logo className='size-8 md:size-10' />
 
 			<div className='inline-flex gap-2'>
 				<ThemeButton className='' />
