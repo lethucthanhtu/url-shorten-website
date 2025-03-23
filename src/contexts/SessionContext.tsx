@@ -84,7 +84,13 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 			});
 	};
 
-	const googleSignIn = async () => signIn({ provider: 'google' });
+	const googleSignIn = async () =>
+		signIn({
+			provider: 'google',
+			options: {
+				redirectTo: window.location.origin,
+			},
+		});
 
 	return (
 		<SessionContext.Provider
