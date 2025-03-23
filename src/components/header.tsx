@@ -70,27 +70,6 @@ export default function Header({ ...props }: HeaderProps) {
 				props.className
 			)}
 		>
-			<NavigationMenu className='hidden md:block'>
-				<NavigationMenuList className=''>
-					<NavigationMenuLink asChild className=''>
-						<Link to='/' className=''>
-							<Button variant='outline' className=''>
-								home
-							</Button>
-						</Link>
-					</NavigationMenuLink>
-					{session && (
-						<NavigationMenuLink asChild className=''>
-							<Link to='/dashboard' className=''>
-								<Button variant='outline' className=''>
-									dashboard
-								</Button>
-							</Link>
-						</NavigationMenuLink>
-					)}
-				</NavigationMenuList>
-			</NavigationMenu>
-
 			<Drawer>
 				<DrawerTrigger asChild>
 					<Button variant='ghost' size='icon' className='md:hidden'>
@@ -164,12 +143,33 @@ export default function Header({ ...props }: HeaderProps) {
 
 			<Logo className='size-8 md:size-10' />
 
+			<NavigationMenu className='hidden md:block'>
+				<NavigationMenuList className=''>
+					<NavigationMenuLink asChild className=''>
+						<Link to='/' className=''>
+							<Button variant='outline' className=''>
+								home
+							</Button>
+						</Link>
+					</NavigationMenuLink>
+					{session && (
+						<NavigationMenuLink asChild className=''>
+							<Link to='/dashboard' className=''>
+								<Button variant='outline' className=''>
+									dashboard
+								</Button>
+							</Link>
+						</NavigationMenuLink>
+					)}
+				</NavigationMenuList>
+			</NavigationMenu>
+
 			<div className='inline-flex gap-2'>
 				<ThemeButton className='' />
 
 				<DropdownMenu>
-					<DropdownMenuTrigger asChild className=''>
-						<Button variant='outline' size='icon' className='hidden md:block'>
+					<DropdownMenuTrigger asChild className='hidden md:flex'>
+						<Button variant='outline' size='icon' className=''>
 							{user ? (
 								<img
 									src={user?.user_metadata?.avatar_url}
