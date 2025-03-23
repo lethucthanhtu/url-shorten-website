@@ -2,12 +2,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowUpDown, ExternalLink, FileSearch2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { Url } from '@/lib/apiUrls';
 import UrlAction from '@/components/DataTable/urlAction';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@tanstack/react-router';
 import ShortenLink from '@/components/DataTable/shortenLinkCell';
+import ActiveBadge from '@/components/activeBadge';
 
 export const getURLColumns = (
 	fetchURLs: () => Promise<unknown>
@@ -69,15 +69,7 @@ export const getURLColumns = (
 			const url = row.original;
 			return (
 				<>
-					<Badge
-						variant='outline'
-						className={cn(
-							'animate-pulse w-16 text-center flex justify-center items-center',
-							url.active ? 'bg-green-500' : 'bg-red-500'
-						)}
-					>
-						{url.active ? 'active' : 'inactive'}
-					</Badge>
+					<ActiveBadge active={url.active} className='w-20' />
 				</>
 			);
 		},
@@ -114,7 +106,7 @@ export const getURLColumns = (
 					<div className='w-fit'>
 						<a
 							href={original_url}
-							className='flex gap-1 items-center hover:underline'
+							className='flex gap-1 items-center hover:underline font-mono'
 						>
 							{display_url}
 							<ExternalLink className='size-4' />

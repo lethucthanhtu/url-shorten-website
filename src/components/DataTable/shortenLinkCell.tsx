@@ -1,4 +1,4 @@
-import { Badge } from '../ui/badge';
+import { Badge } from '@/components/ui/badge';
 import { makeURL } from '@/lib/utils';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
@@ -22,7 +22,7 @@ export default function ShortenLink({ url }: { url: string }) {
 			>
 				<Badge
 					variant='secondary'
-					className='min-w-20 text-center flex justify-center'
+					className='min-w-20 font-mono text-center flex justify-center'
 				>
 					{url}
 				</Badge>

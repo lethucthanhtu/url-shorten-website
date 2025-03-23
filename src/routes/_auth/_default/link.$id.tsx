@@ -20,7 +20,6 @@ import { deleteUrl, getLongUrl, Url } from '@/lib/apiUrls';
 import { cn, makeURL } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
-	Activity,
 	ArrowLeft,
 	Calendar,
 	Check,
@@ -42,6 +41,7 @@ import CountUp from 'react-countup';
 import { Badge } from '@/components/ui/badge';
 import { ChartConfig } from '@/components/ui/chart';
 import LTPieChart from '@/components/Chart/pieChart';
+import ActiveBadge from '@/components/activeBadge';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -254,18 +254,7 @@ function RouteComponent() {
 								<div className='flex flex-col md:flex-row gap-4 justify-between items-center'>
 									<CardTitle className='capitalize flex gap-4 justify-center'>
 										<span className='text-3xl'>{url?.title || 'untitled'}</span>
-										<Badge
-											variant='default'
-											className={cn(
-												'ml-2 my-2 flex items-center justify-center gap-2 animate-pulse',
-												url?.active ? 'bg-green-500' : 'bg-red-500 '
-											)}
-										>
-											<Activity className='size-4' />
-											<span className='stroke-current stroke-2'>
-												{url?.active ? 'active' : 'inactive'}
-											</span>
-										</Badge>
+										<ActiveBadge active={url?.active} className='my-2' iconShown/>
 									</CardTitle>
 									<div className='flex gap-2 justify-center items-center'>
 										<Button
