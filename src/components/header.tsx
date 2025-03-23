@@ -16,17 +16,32 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, LogOut, Settings, User } from 'lucide-react';
+import {
+	Home,
+	LayoutDashboard,
+	LogOut,
+	Menu,
+	Settings,
+	User,
+} from 'lucide-react';
 import { HTMLAttributes } from 'react';
 import { useSession } from '@/contexts/SessionContext';
 import LoginGoogleButton from '@/components/googleButton';
+import {
+	Drawer,
+	DrawerContent,
+	DrawerDescription,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from '@/components/ui/drawer';
 
 type HeaderProps = {} & Omit<HTMLAttributes<HTMLElement>, ''>;
 
 export default function Header({ ...props }: HeaderProps) {
-	const { signOut, user } = useSession();
+	const { session, signOut, user } = useSession();
 	const navigate = useNavigate();
-	const { session } = useSession();
 
 	const handleSignOut = () => {
 		signOut();
@@ -41,7 +56,7 @@ export default function Header({ ...props }: HeaderProps) {
 				props.className
 			)}
 		>
-			<Logo className='size-10' />
+			<Logo className='size-10 hidden md:block' />
 
 			<NavigationMenu className='hidden md:block'>
 				<NavigationMenuList className=''>
@@ -64,12 +79,83 @@ export default function Header({ ...props }: HeaderProps) {
 				</NavigationMenuList>
 			</NavigationMenu>
 
+			<Drawer>
+				<DrawerTrigger asChild>
+					<Button variant='ghost' size='icon' className='md:hidden'>
+						<Menu className='' />
+					</Button>
+				</DrawerTrigger>
+				<DrawerContent className=''>
+					<div className='mx-auto w-full max-w-sm'>
+						<DrawerHeader className='my-4'>
+							<DrawerTitle className='flex justify-between items-center'>
+								{user && (
+									<>
+										<img
+											src={user.user_metadata?.avatar_url}
+											alt={user.user_metadata?.name[0]}
+											className='border border-foreground rounded-lg size-8'
+										/>
+										{user?.email}
+									</>
+								)}
+							</DrawerTitle>
+						</DrawerHeader>
+						<DrawerDescription className='flex flex-col gap-4 mb-4 w-full'>
+							<Link to='/' className='w-full'>
+								<Button variant='link' className='capitalize'>
+									<Home className='' />
+									home
+								</Button>{' '}
+							</Link>
+							{user && (
+								<>
+									<Link to='/dashboard' className='w-full'>
+										<Button variant='link' className='capitalize'>
+											<LayoutDashboard className='' />
+											dashboard
+										</Button>
+									</Link>
+								</>
+							)}
+							<div className=''>
+								<Button variant='link' className='capitalize' disabled>
+									<Settings className='' />
+									settings
+								</Button>
+							</div>
+						</DrawerDescription>
+						<DrawerFooter className='gap-4'>
+							{session ? (
+								<>
+									<Button
+										onClick={handleSignOut}
+										variant='outline'
+										className='capitalize text-red-500'
+									>
+										<LogOut className='' />
+										log out
+									</Button>
+								</>
+							) : (
+								<>
+									<LoginGoogleButton variant='default' className='' />
+								</>
+							)}
+							{/* <DrawerClose asChild>
+								<Button variant='default'>Cancel</Button>
+							</DrawerClose> */}
+						</DrawerFooter>
+					</div>
+				</DrawerContent>
+			</Drawer>
+
 			<div className='inline-flex gap-2'>
 				<ThemeButton className='' />
 
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild className=''>
-						<Button variant='outline' size='icon' className=''>
+						<Button variant='outline' size='icon' className='hidden md:block'>
 							{user ? (
 								<img
 									src={user?.user_metadata?.avatar_url}
@@ -96,7 +182,7 @@ export default function Header({ ...props }: HeaderProps) {
 								</Link>
 								<Link to='/settings'>
 									<DropdownMenuItem className='capitalize' disabled>
-										<Settings />
+										<Settings className='' />
 										<span className=''>settings</span>
 									</DropdownMenuItem>
 								</Link>
@@ -113,8 +199,8 @@ export default function Header({ ...props }: HeaderProps) {
 						<>
 							<DropdownMenuContent align='end' className=''>
 								<Link to='/'>
-									<DropdownMenuItem className='capitalize'>
-										<Settings />
+									<DropdownMenuItem className='capitalize' disabled>
+										<Settings className='' />
 										<span className=''>settings</span>
 									</DropdownMenuItem>
 								</Link>
