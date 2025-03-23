@@ -72,18 +72,18 @@ export default function EditDialog({
 		// error: updateError,
 		// data: updateData,
 		fn: fnUpdate,
-	} = useFetch(() => updateUrl({ ...formData, id: url.id }));
+	} = useFetch<Url>(() => updateUrl({ ...formData, id: url.id }));
 
 	const handleUpdateUrl = async () => {
 		try {
 			schema.parse(formData);
 
-			await fnUpdate()
-				.then(() => fetchURLs())
-				.then(() => {
-					// setTimeout(() => onClose(), 1000);
+			await fnUpdate().then((res) => {
+				if (res) {
+					fetchURLs();
 					onClose();
-				});
+				}
+			});
 		} catch (error) {
 			(error as ZodError).errors.map((error) => {
 				toast('Error', {

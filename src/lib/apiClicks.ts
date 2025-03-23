@@ -57,7 +57,6 @@ export const storeClicks = async ({
 	url_id,
 	original_url,
 }: StoreClicksProps) => {
-	console.log('storeClicks called with:', { url_id, original_url }); // Add this line
 
 	if (!url_id) throw new Error('StoreClick: URL ID required');
 	if (!original_url) throw new Error('StoreClick: Original URL required');

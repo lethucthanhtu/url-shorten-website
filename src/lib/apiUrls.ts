@@ -144,8 +144,8 @@ export async function updateUrl({
 			.eq('shorten_url', custom_url || '')
 			.single();
 
-	if (dataDuplicateShortenURL) throw new Error('URL is already taken');
-	if (errorDuplicateShortenURL) throw errorDuplicateShortenURL;
+	if (dataDuplicateShortenURL || errorDuplicateShortenURL)
+		throw new Error('Custom URL is already taken');
 
 	const { data, error } = await supabase
 		.from('urls')
