@@ -8,23 +8,25 @@ import {
 import { useSession } from '@/contexts/SessionContext';
 import { getURLs, Url } from '@/lib/apiUrls';
 import { getClicksForURLs, Click } from '@/lib/apiClicks';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
 import useFetch from '@/hooks/useFetch';
 import CreateLinkButton from '@/components/createLinkButton';
 import BeatLoader from 'react-spinners/BeatLoader';
 import DataTable from '@/components/DataTable/dataTable';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Asterisk, Link } from 'lucide-react';
+import { ArrowLeft, Asterisk, Link } from 'lucide-react';
 import { getURLColumns } from '@/components/DataTable/urlColumns';
 import CountUp from 'react-countup';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/_auth/_default/dashboard')({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
 	const { user } = useSession();
 	const { currentTheme } = useTheme();
 
@@ -69,6 +71,11 @@ function RouteComponent() {
 			) : (
 				<>
 					<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
+						<div className='w-full'>
+							<Button variant='ghost' onClick={() => navigate({ to: '/' })}>
+								<ArrowLeft /> Go back to home
+							</Button>
+						</div>
 						<div className='flex justify-center items-center gap-4 w-full'>
 							<Card className='w-full basis-1/2'>
 								<CardHeader className=''>
