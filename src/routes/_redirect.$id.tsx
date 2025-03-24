@@ -6,38 +6,18 @@ import useFetch from '@/hooks/useFetch';
 import { storeClicks } from '@/lib/apiClicks';
 import { getRedirectUrl } from '@/lib/apiUrls';
 import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { BeatLoader } from 'react-spinners';
-import { Helmet } from 'react-helmet-async';
-import { getMetadata } from '@/lib/apiMeta';
 
 export const Route = createFileRoute('/_redirect/$id')({
 	component: RouteComponent,
 	notFoundComponent: NotFound,
 });
 
-type Metadata = {
-	title?: string;
-	description?: string;
-	image?: string;
-	siteName?: string;
-} | null;
-
 function RouteComponent() {
 	const { id } = Route.useParams();
 	const { currentTheme } = useTheme();
 	const { loading, error, data, fn } = useFetch(() => getRedirectUrl(id));
-	const [metadata, setMetadata] = useState<Metadata>(null);
-
-	useEffect(() => {
-		if (data?.original_url)
-			getMetadata(data.original_url)
-				.then((meta) => {
-					setMetadata(meta);
-					console.log(meta);
-				})
-				.catch(() => setMetadata(null));
-	}, [data?.original_url]);
 
 	const {
 		// loading: loadingStats,
@@ -56,8 +36,7 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!loading && data && !error) {
-			fnStats()
-				// .finally(() => window.location.assign(data.original_url));
+			fnStats().finally(() => window.location.assign(data.original_url));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, data, error]);
@@ -72,30 +51,6 @@ function RouteComponent() {
 
 	return (
 		<>
-			<Helmet>
-				<title>{metadata?.title || data?.title || 'Redirecting...'}</title>
-				<meta
-					property='og:title'
-					content={metadata?.title || data?.title || 'Redirecting...'}
-				/>
-				<meta
-					property='og:description'
-					content={metadata?.description || `Redirecting to ${displayURL}`}
-				/>
-				<meta property='og:image' content={metadata?.image || ''} />
-				<meta property='og:site_name' content={metadata?.siteName || ''} />
-				<meta property='og:url' content={data?.original_url || ''} />
-				<meta name='twitter:card' content='summary_large_image' />
-				<meta
-					name='twitter:title'
-					content={metadata?.title || data?.title || 'Redirecting...'}
-				/>
-				<meta
-					name='twitter:description'
-					content={metadata?.description || `Redirecting to ${displayURL}`}
-				/>
-				<meta name='twitter:image' content={metadata?.image || ''} />
-			</Helmet>
 			<article className='min-h-screen flex flex-col md:flex-row justify-center items-center gap-16'>
 				<Logo className='!rounded-2xl size-72 duration-300 transition hover:scale-110' />
 				<div className='space-y-3 flex flex-col gap-4'>
