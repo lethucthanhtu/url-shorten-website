@@ -120,6 +120,22 @@ export default function EditDialog({
 		}
 	}, [isOpen, url.active]);
 
+	// Add this near the top of your component
+	const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.visualViewport) {
+				const isKeyboard = window.visualViewport.height < window.innerHeight;
+				setIsKeyboardVisible(isKeyboard);
+			}
+		};
+
+		window.visualViewport?.addEventListener('resize', handleResize);
+		return () =>
+			window.visualViewport?.removeEventListener('resize', handleResize);
+	}, []);
+
 	return (
 		<>
 			{isDesktop ? (
@@ -204,8 +220,10 @@ export default function EditDialog({
 			) : (
 				<>
 					<Drawer open={isOpen} onOpenChange={onClose}>
-						<DrawerContent className=''>
-							<div className='mx-auto w-full max-w-sm gap-4 py-4 flex flex-col'>
+						<DrawerContent
+							className={cn('', isKeyboardVisible ? '' : 'h-[96%]')}
+						>
+							<div className='mx-auto w-full max-w-sm gap-4 py-4 flex flex-col overflow-y-auto'>
 								<DrawerHeader className='text-start'>
 									<DrawerTitle className='capitalize'>
 										update short link
