@@ -1,4 +1,10 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +40,8 @@ import {
 } from '@/components/ui/drawer';
 import { Switch } from '@/components/ui/switch';
 
+type FormData = {} & Pick<Url, 'title' | 'custom_url' | 'active'>;
+
 type EditDialogProps = {
 	isOpen: boolean;
 	onClose: () => void;
@@ -50,8 +58,6 @@ export default function EditDialog({
 }: EditDialogProps) {
 	const isDesktop = window.matchMedia('(min-width: 768px)').matches;
 	const [active, setActive] = useState(url.active ? 'active' : 'inactive');
-
-	type FormData = {} & Pick<Url, 'title' | 'custom_url' | 'active'>;
 
 	const [formData, setFormData] = useState<FormData>({ ...url });
 
@@ -72,10 +78,6 @@ export default function EditDialog({
 			.nullable()
 			.optional(),
 	});
-
-	const handleChanges = (e: ChangeEvent<HTMLInputElement>) => {
-		setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
-	};
 
 	const {
 		loading,
@@ -118,71 +120,6 @@ export default function EditDialog({
 		}
 	}, [isOpen, url.active]);
 
-	const EditForm = ({ className }: { className?: string }) => {
-		return (
-			<>
-				<div className={cn('grid gap-4 py-4', className)}>
-					<div className='grid md:grid-cols-4 items-center gap-2'>
-						<Label
-							htmlFor='title'
-							className='capitalize md:text-right ml-2 md:ml-0'
-						>
-							title
-						</Label>
-						<Input
-							id='title'
-							value={formData.title + ''}
-							onChange={(e) =>
-								setFormData({ ...formData, title: e.target.value })
-							}
-							placeholder='Name for your link (optional)'
-							className='col-span-3'
-						/>
-					</div>
-					<div className='grid md:grid-cols-4 items-center gap-2'>
-						<Label
-							htmlFor='original_url'
-							className='capitalize md:text-right ml-2 md:ml-0'
-						>
-							original url
-							<span className='ml-0.5 text-red-500'>*</span>
-						</Label>
-						<Input
-							id='original_url'
-							disabled
-							value={url.original_url}
-							type='url'
-							required
-							placeholder='https://example.com'
-							className='col-span-3'
-						/>
-					</div>
-					<div className='grid md:grid-cols-4 items-center gap-2'>
-						<Label
-							htmlFor='custom_url'
-							className='capitalize md:text-right ml-2 md:ml-0'
-						>
-							custom url
-						</Label>
-						<div className='flex justify-center items-center w-full gap-2 col-span-3'>
-							<Badge aria-label='url' className='text-sm'>
-								{window.location.hostname}
-							</Badge>
-							/
-							<Input
-								id='custom_url'
-								value={formData.custom_url || ''}
-								onChange={handleChanges}
-								placeholder='(optional)'
-								className=''
-							/>
-						</div>
-					</div>
-				</div>
-			</>
-		);
-	};
-
 	return (
 		<>
 			{isDesktop ? (
@@ -197,7 +134,12 @@ export default function EditDialog({
 									Update link here. Click save when you're done.
 								</DialogDescription>
 							</DialogHeader>
-							<EditForm className='' />
+							<EditForm
+								className=''
+								formData={formData}
+								setFormData={setFormData}
+								original_url={url.original_url}
+							/>
 							<DialogFooter className=''>
 								<div className='flex justify-between w-full'>
 									<DropdownMenu>
@@ -272,7 +214,12 @@ export default function EditDialog({
 										Update link here. Click save when you're done.
 									</DrawerDescription>
 								</DrawerHeader>
-								<EditForm className='mx-4' />
+								<EditForm
+									className='mx-4'
+									formData={formData}
+									setFormData={setFormData}
+									original_url={url.original_url}
+								/>
 								<DrawerFooter className='gap-4'>
 									<div className='flex justify-between items-center'>
 										<div className='inline-flex gap-2 justify-center items-center'>
@@ -320,3 +267,84 @@ export default function EditDialog({
 		</>
 	);
 }
+
+type EditFormProps = {
+	className?: string;
+	formData: FormData;
+	setFormData: Dispatch<SetStateAction<FormData>>;
+	original_url: string;
+};
+
+const EditForm = ({
+	className,
+	formData,
+	setFormData,
+	original_url,
+}: EditFormProps) => {
+	const handleChanges = (e: ChangeEvent<HTMLInputElement>) => {
+		setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+	};
+
+	return (
+		<>
+			<div className={cn('grid gap-4 py-4', className)}>
+				<div className='grid md:grid-cols-4 items-center gap-2'>
+					<Label
+						htmlFor='title'
+						className='capitalize md:text-right ml-2 md:ml-0'
+					>
+						title
+					</Label>
+					<Input
+						id='title'
+						value={formData.title + ''}
+						onChange={(e) =>
+							setFormData({ ...formData, title: e.target.value })
+						}
+						placeholder='Name for your link (optional)'
+						className='col-span-3'
+					/>
+				</div>
+				<div className='grid md:grid-cols-4 items-center gap-2'>
+					<Label
+						htmlFor='original_url'
+						className='capitalize md:text-right ml-2 md:ml-0'
+					>
+						original url
+						<span className='ml-0.5 text-red-500'>*</span>
+					</Label>
+					<Input
+						id='original_url'
+						disabled
+						value={original_url}
+						type='url'
+						required
+						placeholder='https://example.com'
+						className='col-span-3'
+					/>
+				</div>
+				<div className='grid md:grid-cols-4 items-center gap-2'>
+					<Label
+						htmlFor='custom_url'
+						className='capitalize md:text-right ml-2 md:ml-0'
+					>
+						custom url
+					</Label>
+					<div className='flex justify-center items-center w-full gap-2 col-span-3'>
+						<Badge aria-label='url' className='text-sm'>
+							{window.location.hostname}
+						</Badge>
+						/
+						<Input
+							id='custom_url'
+							value={formData.custom_url || ''}
+							onChange={handleChanges}
+							placeholder='(optional)'
+							className=''
+						/>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+};
