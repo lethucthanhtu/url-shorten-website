@@ -71,7 +71,7 @@ function RouteComponent() {
 			) : (
 				<>
 					<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
-						<div className='w-full'>
+						<div className='w-full md:hidden'>
 							<Button variant='ghost' onClick={() => navigate({ to: '/' })}>
 								<ArrowLeft /> Go back to home
 							</Button>
