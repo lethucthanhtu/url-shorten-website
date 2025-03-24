@@ -221,7 +221,7 @@ export default function EditDialog({
 				<>
 					<Drawer open={isOpen} onOpenChange={onClose}>
 						<DrawerContent
-							className={cn('', isKeyboardVisible ? '' : 'h-[96%]')}
+							className={cn('', isKeyboardVisible ? 'h-auto' : 'h-[96%]')}
 						>
 							<div className='mx-auto w-full max-w-sm gap-4 py-4 flex flex-col overflow-y-auto'>
 								<DrawerHeader className='text-start'>
