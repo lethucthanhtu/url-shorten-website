@@ -243,12 +243,14 @@ function RouteComponent() {
 						</div>
 						<Card className='w-full'>
 							<CardHeader className='w-full'>
-								<div className='flex flex-col md:flex-row gap-4 justify-between items-center'>
-									<CardTitle className='capitalize flex gap-4 justify-center'>
-										<span className='text-3xl'>{url?.title || 'untitled'}</span>
+								<div className='flex flex-col md:flex-row gap-4 w-full justify-between items-center'>
+									<CardTitle className='capitalize flex gap-4 justify-center items-center md:basis-1/2 max-w-full'>
+										<span className='text-3xl line-clamp-2 text-start'>
+											{url?.title || 'untitled'}
+										</span>
 										<ActiveBadge
 											active={url?.active}
-											className='my-2'
+											className='my-2 shrink-0'
 											iconShown
 										/>
 									</CardTitle>
