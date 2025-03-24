@@ -42,8 +42,9 @@ type HeaderProps = {} & Omit<HTMLAttributes<HTMLElement>, ''>;
 export default function Header({ ...props }: HeaderProps) {
 	const { session, signOut, user } = useSession();
 	const navigate = useNavigate();
-	const [isVisible, setIsVisible] = useState(true);
-	const [lastScrollY, setLastScrollY] = useState(0);
+	const [isVisible, setIsVisible] = useState<boolean>(true);
+	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+	const [lastScrollY, setLastScrollY] = useState<number>(0);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -67,10 +68,11 @@ export default function Header({ ...props }: HeaderProps) {
 			className={cn(
 				'p-4 md:px-12 bg-cover bg-center rounded-lg flex justify-between items-center w-full sticky top-0 bg-background border-b z-50 transition-transform duration-300',
 				!isVisible && 'md:transform md:translate-y-0 -translate-y-full',
+				isDrawerOpen && '',
 				props.className
 			)}
 		>
-			<Drawer>
+			<Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
 				<DrawerTrigger asChild>
 					<Button variant='ghost' size='icon' className='md:hidden'>
 						<Menu className='' />
