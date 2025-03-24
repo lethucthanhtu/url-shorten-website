@@ -8,6 +8,7 @@ import { getRedirectUrl } from '@/lib/apiUrls';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { BeatLoader } from 'react-spinners';
+import { Helmet } from 'react-helmet-async';
 
 export const Route = createFileRoute('/_redirect/$id')({
 	component: RouteComponent,
@@ -53,7 +54,16 @@ function RouteComponent() {
 
 	return (
 		<>
-			<article className=' min-h-screen flex flex-col md:flex-row justify-center items-center gap-16'>
+			<Helmet>
+				<title>{data?.title || 'Redirecting...'}</title>
+				<meta property="og:title" content={data?.title || 'Redirecting...'} />
+				<meta property="og:description" content={`Redirecting to ${displayURL}`} />
+				<meta property="og:url" content={data?.original_url || ''} />
+				<meta name="twitter:card" content="summary" />
+				<meta name="twitter:title" content={data?.title || 'Redirecting...'} />
+				<meta name="twitter:description" content={`Redirecting to ${displayURL}`} />
+			</Helmet>
+			<article className='min-h-screen flex flex-col md:flex-row justify-center items-center gap-16'>
 				<Logo className='!rounded-2xl size-72 duration-300 transition hover:scale-110' />
 				<div className='space-y-3 flex flex-col gap-4'>
 					{!error ? (

@@ -16,6 +16,8 @@ import { routeTree } from '@/routeTree.gen';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { SessionProvider } from '@/contexts/SessionContext';
 
+import { HelmetProvider } from 'react-helmet-async';
+
 // Create a new router instance
 const router = createRouter({
 	routeTree,
@@ -36,11 +38,13 @@ if (!rootElement.innerHTML)
 	createRoot(rootElement).render(
 		<StrictMode>
 			<SessionProvider>
-				<ThemeProvider defaultTheme='light'>
-					<RouterProvider router={router} />
-					<Analytics />
-					<SpeedInsights />
-				</ThemeProvider>
+				<HelmetProvider>
+					<ThemeProvider defaultTheme='light'>
+						<RouterProvider router={router} />
+						<Analytics />
+						<SpeedInsights />
+					</ThemeProvider>
+				</HelmetProvider>
 			</SessionProvider>
 		</StrictMode>
 	);
