@@ -32,8 +32,11 @@ function RouteComponent() {
 	useEffect(() => {
 		if (data?.original_url)
 			getMetadata(data.original_url)
-				.then((meta) => setMetadata(meta))
-				.catch(() => setMetadata(null)); // Handle any errors gracefully
+				.then((meta) => {
+					setMetadata(meta);
+					console.log(meta);
+				})
+				.catch(() => setMetadata(null));
 	}, [data?.original_url]);
 
 	const {
@@ -53,7 +56,8 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!loading && data && !error) {
-			fnStats().finally(() => window.location.assign(data.original_url));
+			fnStats()
+				// .finally(() => window.location.assign(data.original_url));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, data, error]);
