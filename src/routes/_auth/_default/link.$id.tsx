@@ -103,7 +103,7 @@ function RouteComponent() {
 		.replace('www.', '');
 
 	const handleCopy = () => {
-		navigator.clipboard.writeText(makeURL(url?.shorten_url || ''));
+		navigator.clipboard.writeText(URL);
 
 		setCopy(true);
 		setTimeout(() => {
