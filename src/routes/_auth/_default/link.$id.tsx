@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useSession } from '@/contexts/SessionContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import useFetch from '@/hooks/useFetch';
 import { Click, getClicksForURL } from '@/lib/apiClicks';
 import { getLongUrl, Url } from '@/lib/apiUrls';
@@ -35,7 +34,6 @@ import {
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState, useRef } from 'react';
-import { BeatLoader } from 'react-spinners';
 import { toPng } from 'html-to-image';
 import CountUp from 'react-countup';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +41,8 @@ import { ChartConfig } from '@/components/ui/chart';
 import LTPieChart from '@/components/Chart/pieChart';
 import ActiveBadge from '@/components/activeBadge';
 import DeleteDialog from '@/components/DataTable/urlDeleteDialog';
+import LoadingWrapper from '@/components/loadingWrapper';
+import { engagementChartConfig } from '@/components/Chart/chartConfig';
 
 export const Route = createFileRoute('/_auth/_default/link/$id')({
 	component: RouteComponent,
@@ -52,7 +52,6 @@ export const Route = createFileRoute('/_auth/_default/link/$id')({
 
 function RouteComponent() {
 	const { id } = Route.useParams();
-	const { currentTheme } = useTheme();
 	const { user } = useSession();
 	const navigate = useNavigate();
 	const [copy, setCopy] = useState<boolean>(false);
@@ -147,11 +146,9 @@ function RouteComponent() {
 				const date = new Date(click.created_at).toLocaleDateString('en-GB');
 
 				const existingEntry = acc.find((entry) => entry.date === date);
-				if (existingEntry) {
-					existingEntry.numberOfClicks++;
-				} else {
-					acc.push({ date, numberOfClicks: 1 });
-				}
+				if (existingEntry) existingEntry.numberOfClicks++;
+				else acc.push({ date, numberOfClicks: 1 });
+
 				return acc;
 			},
 			[] as { date: string; numberOfClicks: number }[]
@@ -218,263 +215,244 @@ function RouteComponent() {
 		),
 	} satisfies ChartConfig;
 
-	const chartClicksConfig = {
-		clicks: {
-			label: 'Clicks',
-			color: 'hsl(var(--chart-2))',
-		},
-	} satisfies ChartConfig;
-
 	return (
 		<>
-			<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
-				{loadingURL || loadingStats ? (
-					<>
-						<BeatLoader
-							color={currentTheme === 'dark' ? 'white' : 'black'}
-							className=''
-						/>
-					</>
-				) : (
-					<>
-						<div className='w-full'>
-							<Button
-								variant='ghost'
-								onClick={() => navigate({ to: '/dashboard' })}
-							>
-								<ArrowLeft /> Go back to Dashboard
-							</Button>
-						</div>
-						<Card className='w-full'>
-							<CardHeader className='w-full'>
-								<div className='flex flex-col md:flex-row gap-4 w-full justify-between items-center'>
-									<CardTitle className='capitalize flex gap-4 justify-between md:justify-start items-center md:basis-1/2 max-w-full'>
-										<span className='text-3xl line-clamp-2 text-start'>
-											{url?.title || 'untitled'}
-										</span>
-										<ActiveBadge
-											active={url?.active}
-											className='my-2 shrink-0'
-											iconShown
-										/>
-									</CardTitle>
-									<div className='flex gap-2 justify-center items-center'>
-										<Button
-											variant='default'
-											onClick={() => setIsUpdateDialogOpen(true)}
-											className='capitalize'
-										>
-											<Edit className='' />
-											<span className='capitalize hidden md:block'>edit</span>
-										</Button>
-										<Button
-											variant='default'
-											onClick={handleCopy}
-											className='capitalize'
-										>
-											{copy ? <Check className='' /> : <Copy className='' />}
-											<span className='capitalize hidden md:block'>copy</span>
-										</Button>
-										<Button
-											variant='default'
-											onClick={() => setIsShareCodeDialogOpen(true)}
-											className='capitalize'
-										>
-											<Share className='' />
-											<span className='capitalize hidden md:block'>share</span>
-										</Button>
-										<Button
-											variant='destructive'
-											onClick={() => setIsDeleteDialogOpen(true)}
-											className='capitalize'
-										>
-											<Trash className='' />
-											<span className='capitalize hidden md:block'>remove</span>
-										</Button>
-									</div>
-								</div>
-							</CardHeader>
-							<CardContent className='h-full mt-4 flex flex-col gap-4'>
-								<CardDescription className='md:ml-4 flex md:gap-8 justify-between md:justify-start items-center'>
-									<Globe className='h-full scale-[200%] rounded-full hidden md:block' />
-									<div className='text-start w-full'>
-										<h3 className=''>
-											<a target='_blank' href={URL} className=''>
-												<Button
-													variant='link'
-													className='text-blue-400 text-lg'
-												>
-													{DISPLAY_URL}
-												</Button>
-											</a>
-										</h3>
-										<h5 className=''>
-											<a target='_blank' href={url?.original_url} className=''>
-												<Button variant='link' className=''>
-													<span className='hidden md:block'>
-														{url?.original_url && url?.original_url.length > 100
-															? `${url?.original_url.slice(0, 100 - 3)}...`
-															: url?.original_url}
-													</span>
-													<span className='md:hidden'>
-														{url?.original_url && url?.original_url.length > 40
-															? `${url?.original_url.slice(0, 40 - 3)}...`
-															: url?.original_url}
-													</span>
-													<ExternalLink className='' />
-												</Button>
-											</a>
-										</h5>
-									</div>
-								</CardDescription>
-								<Separator className='' />
-							</CardContent>
-							<CardFooter className='flex gap-4 justify-start items-center'>
-								<span className='flex gap-2 justify-center items-center'>
-									<Calendar />
-									<Badge variant='outline'>
-										{new Date(url?.created_at || '').toLocaleString('en-GB', {
-											timeZone: 'Asia/Ho_Chi_Minh',
-										})}
-									</Badge>
-								</span>
-								<span className='flex gap-2 justify-center items-center'>
-									<Clock />
-									<Badge variant='outline'>
-										{new Date(url?.updated_at || '').toLocaleString('en-GB', {
-											timeZone: 'Asia/Ho_Chi_Minh',
-										})}
-									</Badge>
-								</span>
-							</CardFooter>
-						</Card>
-						<div className='w-full flex flex-col md:flex-row md:justify-between items-start gap-4'>
-							<Card className='md:basis-1/3 w-full h-full md:sticky top-[5.75rem]'>
-								<CardHeader className=''>
-									<CardTitle className='capitalize text-2xl text-center'>
-										QR code
-									</CardTitle>
-								</CardHeader>
-								<CardContent
-									onClick={() => setQrShow(!qrShow)}
-									className='relative'
-								>
-									<CardDescription
-										ref={qrRef}
-										className={cn(
-											'aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition ',
-											qrShow ? 'blur-xl' : 'blur-none hover:scale-100'
-										)}
-									>
-										<QRCodeSVG
-											value={URL}
-											className='size-full aspect-square ring-2 ring-black dark:ring-white rounded-xl'
-										/>
-									</CardDescription>
-									<Badge
-										variant={'default'}
-										className={cn(
-											'flex gap-2 absolute scale-150 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30',
-											qrShow ? '' : 'hidden'
-										)}
-									>
-										<MousePointerClick className='' /> Click to reveal
-									</Badge>
-								</CardContent>
-								<CardFooter className='w-full'>
+			<LoadingWrapper loading={loadingURL || loadingStats}>
+				<div className='flex flex-col md:mx-12 justify-center items-center gap-8'>
+					<div className='w-full'>
+						<Button
+							variant='ghost'
+							onClick={() => navigate({ to: '/dashboard' })}
+						>
+							<ArrowLeft /> Go back to Dashboard
+						</Button>
+					</div>
+					<Card className='w-full'>
+						<CardHeader className='w-full'>
+							<div className='flex flex-col md:flex-row gap-4 w-full justify-between items-center'>
+								<CardTitle className='capitalize flex gap-4 justify-between md:justify-start items-center md:basis-1/2 max-w-full'>
+									<span className='text-3xl line-clamp-2 text-start'>
+										{url?.title || 'untitled'}
+									</span>
+									<ActiveBadge
+										active={url?.active}
+										className='my-2 shrink-0'
+										iconShown
+									/>
+								</CardTitle>
+								<div className='flex gap-2 justify-center items-center'>
 									<Button
 										variant='default'
-										className='w-full'
-										onClick={handleDownload}
+										onClick={() => setIsUpdateDialogOpen(true)}
+										className='capitalize'
 									>
-										<Download className='' />
-										Download as .PNG
+										<Edit className='' />
+										<span className='capitalize hidden md:block'>edit</span>
 									</Button>
-								</CardFooter>
-							</Card>
-							<Card className='md:basis-2/3 w-full h-full'>
-								<CardHeader className=''>
-									<CardTitle className='flex justify-between items-start'>
-										<span className='capitalize text-2xl'>engagements</span>
-										<CountUp
-											end={stats?.length || 0}
-											className='capitalize text-4xl font-mono'
-										/>
-									</CardTitle>
-									<div className='flex gap-2 !mt-4 justify-end'>
-										<Button
-											variant={timeRange === '7d' ? 'default' : 'outline'}
-											onClick={() => setTimeRange('7d')}
-											size='sm'
-										>
-											7 days
-										</Button>
-										<Button
-											variant={timeRange === '90d' ? 'default' : 'outline'}
-											onClick={() => setTimeRange('90d')}
-											size='sm'
-										>
-											90 days
-										</Button>
-										<Button
-											variant={timeRange === '1y' ? 'default' : 'outline'}
-											onClick={() => setTimeRange('1y')}
-											size='sm'
-										>
-											1 year
-										</Button>
-										<Button
-											variant={timeRange === 'all' ? 'default' : 'outline'}
-											onClick={() => setTimeRange('all')}
-											size='sm'
-										>
-											All time
-										</Button>
-									</div>
-								</CardHeader>
-								<CardContent className='w-full'>
-									<CardDescription className='w-full flex flex-col gap-4'>
-										<LTLineChart
-											chartConfig={chartClicksConfig}
-											chartData={chartClicksData}
-											title='Click Analytics'
-											description='Daily click statistics'
-											footerTitle='Total clicks tracked over time'
-											footerDescription='Showing daily click statistics for your shortened URL'
-										/>
+									<Button
+										variant='default'
+										onClick={handleCopy}
+										className='capitalize'
+									>
+										{copy ? <Check className='' /> : <Copy className='' />}
+										<span className='capitalize hidden md:block'>copy</span>
+									</Button>
+									<Button
+										variant='default'
+										onClick={() => setIsShareCodeDialogOpen(true)}
+										className='capitalize'
+									>
+										<Share className='' />
+										<span className='capitalize hidden md:block'>share</span>
+									</Button>
+									<Button
+										variant='destructive'
+										onClick={() => setIsDeleteDialogOpen(true)}
+										className='capitalize'
+									>
+										<Trash className='' />
+										<span className='capitalize hidden md:block'>remove</span>
+									</Button>
+								</div>
+							</div>
+						</CardHeader>
+						<CardContent className='h-full mt-4 flex flex-col gap-4'>
+							<CardDescription className='md:ml-4 flex md:gap-8 justify-between md:justify-start items-center'>
+								<Globe className='h-full scale-[200%] rounded-full hidden md:block' />
+								<div className='text-start w-full'>
+									<h3 className=''>
+										<a target='_blank' href={URL} className=''>
+											<Button variant='link' className='text-blue-400 text-lg'>
+												{DISPLAY_URL}
+											</Button>
+										</a>
+									</h3>
+									<h5 className=''>
+										<a target='_blank' href={url?.original_url} className=''>
+											<Button variant='link' className=''>
+												<span className='hidden md:block'>
+													{url?.original_url && url?.original_url.length > 100
+														? `${url?.original_url.slice(0, 100 - 3)}...`
+														: url?.original_url}
+												</span>
+												<span className='md:hidden'>
+													{url?.original_url && url?.original_url.length > 40
+														? `${url?.original_url.slice(0, 40 - 3)}...`
+														: url?.original_url}
+												</span>
+												<ExternalLink className='' />
+											</Button>
+										</a>
+									</h5>
+								</div>
+							</CardDescription>
+							<Separator className='' />
+						</CardContent>
+						<CardFooter className='flex gap-4 justify-start items-center'>
+							<span className='flex gap-2 justify-center items-center'>
+								<Calendar />
+								<Badge variant='outline'>
+									{new Date(url?.created_at || '').toLocaleString('en-GB', {
+										timeZone: 'Asia/Ho_Chi_Minh',
+									})}
+								</Badge>
+							</span>
+							<span className='flex gap-2 justify-center items-center'>
+								<Clock />
+								<Badge variant='outline'>
+									{new Date(url?.updated_at || '').toLocaleString('en-GB', {
+										timeZone: 'Asia/Ho_Chi_Minh',
+									})}
+								</Badge>
+							</span>
+						</CardFooter>
+					</Card>
+					<div className='w-full flex flex-col md:flex-row md:justify-between items-start gap-4'>
+						<Card className='md:basis-1/3 w-full h-full md:sticky top-[5.75rem]'>
+							<CardHeader className=''>
+								<CardTitle className='capitalize text-2xl text-center'>
+									QR code
+								</CardTitle>
+							</CardHeader>
+							<CardContent
+								onClick={() => setQrShow(!qrShow)}
+								className='relative'
+							>
+								<CardDescription
+									ref={qrRef}
+									className={cn(
+										'aspect-square w-full scale-90 ring-2 ring-black dark:ring-white rounded-xl duration-300 transition ',
+										qrShow ? 'blur-xl' : 'blur-none hover:scale-100'
+									)}
+								>
+									<QRCodeSVG
+										value={URL}
+										className='size-full aspect-square ring-2 ring-black dark:ring-white rounded-xl'
+									/>
+								</CardDescription>
+								<Badge
+									variant={'default'}
+									className={cn(
+										'flex gap-2 absolute scale-150 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30',
+										qrShow ? '' : 'hidden'
+									)}
+								>
+									<MousePointerClick className='' /> Click to reveal
+								</Badge>
+							</CardContent>
+							<CardFooter className='w-full'>
+								<Button
+									variant='default'
+									className='w-full'
+									onClick={handleDownload}
+								>
+									<Download className='' />
+									Download as .PNG
+								</Button>
+							</CardFooter>
+						</Card>
+						<Card className='md:basis-2/3 w-full h-full'>
+							<CardHeader className=''>
+								<CardTitle className='flex justify-between items-start'>
+									<span className='capitalize text-2xl'>engagements</span>
+									<CountUp
+										end={stats?.length || 0}
+										className='capitalize text-4xl font-mono'
+									/>
+								</CardTitle>
+								<div className='flex gap-2 !mt-4 justify-end'>
+									<Button
+										variant={timeRange === '7d' ? 'default' : 'outline'}
+										onClick={() => setTimeRange('7d')}
+										size='sm'
+									>
+										7 days
+									</Button>
+									<Button
+										variant={timeRange === '90d' ? 'default' : 'outline'}
+										onClick={() => setTimeRange('90d')}
+										size='sm'
+									>
+										90 days
+									</Button>
+									<Button
+										variant={timeRange === '1y' ? 'default' : 'outline'}
+										onClick={() => setTimeRange('1y')}
+										size='sm'
+									>
+										1 year
+									</Button>
+									<Button
+										variant={timeRange === 'all' ? 'default' : 'outline'}
+										onClick={() => setTimeRange('all')}
+										size='sm'
+									>
+										All time
+									</Button>
+								</div>
+							</CardHeader>
+							<CardContent className='w-full'>
+								<CardDescription className='w-full flex flex-col gap-4'>
+									<LTLineChart
+										chartConfig={engagementChartConfig}
+										chartData={chartClicksData}
+										title='Click Analytics'
+										description='Daily click statistics'
+										footerTitle='Total clicks tracked over time'
+										footerDescription='Showing daily click statistics for your shortened URL'
+									/>
 
-										<div className='flex flex-col md:flex-row gap-4 justify-center items-center w-full'>
+									<div className='flex flex-col md:flex-row gap-4 justify-center items-center w-full'>
+										<LTPieChart
+											chartConfig={chartDevicesConfig}
+											chartData={chartDevicesData}
+											className='md:basis-1/2 w-full'
+											title='Device Distribution'
+											description='Click statistics by device type'
+											footerTitle={`Total Devices: ${chartDevicesData.length}`}
+											footerDescription='Distribution of devices accessing your link'
+										/>
+										<div className='relative md:basis-1/2 w-full'>
 											<LTPieChart
 												chartConfig={chartDevicesConfig}
-												chartData={chartDevicesData}
-												className='md:basis-1/2 w-full'
-												title='Device Distribution'
-												description='Click statistics by device type'
+												chartData={[]}
+												className='md:basis-1/2 w-full blur-sm'
+												title='Location Distribution'
+												description='Click statistics by location'
 												footerTitle={`Total Devices: ${chartDevicesData.length}`}
-												footerDescription='Distribution of devices accessing your link'
+												footerDescription='Distribution of location accessing your link'
 											/>
-											<div className='relative md:basis-1/2 w-full'>
-												<LTPieChart
-													chartConfig={chartDevicesConfig}
-													chartData={[]}
-													className='md:basis-1/2 w-full blur-sm'
-													title='Location Distribution'
-													description='Click statistics by location'
-													footerTitle={`Total Devices: ${chartDevicesData.length}`}
-													footerDescription='Distribution of location accessing your link'
-												/>
-												<Badge className='scale-150 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 capitalize'>
-													coming soon
-												</Badge>
-											</div>
+											<Badge className='scale-150 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 capitalize'>
+												coming soon
+											</Badge>
 										</div>
-									</CardDescription>
-								</CardContent>
-								<CardFooter className=''></CardFooter>
-							</Card>
-						</div>
-					</>
-				)}
+									</div>
+								</CardDescription>
+							</CardContent>
+							<CardFooter className=''></CardFooter>
+						</Card>
+					</div>
+				</div>
 				{url && (
 					<>
 						<EditDialog
@@ -496,7 +474,7 @@ function RouteComponent() {
 						/>
 					</>
 				)}
-			</div>
+			</LoadingWrapper>
 		</>
 	);
 }
