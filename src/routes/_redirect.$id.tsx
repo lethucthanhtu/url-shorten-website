@@ -1,6 +1,7 @@
 import Logo from '@/components/logo';
 import NotFound from '@/components/notFound';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import useFetch from '@/hooks/useFetch';
 import { storeClicks } from '@/lib/apiClicks';
@@ -36,7 +37,9 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!loading && data && !error) {
-			fnStats().finally(() => window.location.assign(data.original_url));
+			fnStats().finally(() => {
+				if (!data.nsfw) window.location.assign(data.original_url);
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, data, error]);
@@ -68,6 +71,16 @@ function RouteComponent() {
 									Next stop
 									<Badge className='ml-2'>{displayURL}</Badge>
 								</p>
+							)}
+							{data?.nsfw && (
+								<>
+									<Button
+										className=''
+										onClick={() => window.location.assign(data.original_url)}
+									>
+										Proceed
+									</Button>
+								</>
 							)}
 						</>
 					) : (
